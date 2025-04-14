@@ -1,0 +1,29 @@
+﻿; =============================================
+; 게임 배경설명과 도움말을 볼 수 있는 곳
+;
+;
+; =============================================
+
+@HELPMENU(state)
+#DIM state
+#DIM LOC
+
+; 여백과 배경 정리
+FOR LOC , 0 , 10
+	CLEARLINE LINECOUNT
+	PRINTL
+NEXT
+
+PRINTFORMW ... 부드러운 바람이 불어오는 한가로운 여운 속 어딘가 낯설지만 아늑한 기운이 감도는 하얀 공간
+PRINTFORMW 그 가운데, 한 소녀가 조용히 앉아 있다.
+
+PRINTFORMW 연보라색 머리카락은 어깨를 따라 흐르고, 한쪽엔 하늘색 리본이 달려 있다.
+PRINTFORMW 회청색 눈동자는 맑고 차분했지만, 어딘가 나이를 넘는 깊이를 머금고 있었다.
+PRINTFORMW 그리고 놀란 듯 반짝이는 눈망울이 당신을 향해 돌아온다.
+
+CALL TALK_IMAGE(1, 3)
+CALL TALK_CHARA(1, "어라?")
+PRINTFORMW 소녀는 순간 멈칫하더니, 고개를 갸웃하며 당신에게 다가온다.
+
+CALL TALK_IMAGE(1, 3)
+CALL TALK_CHARA(1, "너 어떻게 여기 온거야?")

@@ -1,0 +1,32 @@
+﻿@fallbackOnEnemyTurn
+#dim dynamic sexualAttackRate
+
+	sexualAttackRate = CFLAG:TARGET:성공격빈도
+
+	if FLAG:유혹의계약
+		repeat FLAG:유혹의계약
+			sexualAttackRate = sexualAttackRate * (10 + FLAG:유혹의계약) / 10
+		rend
+	endif
+
+	; 같은 위치에 있는 경우
+	if isMasterInRange()
+		if RAND:100 < CFLAG:TARGET:성공격빈도
+			TFLAG:이번턴성공격 = 1
+			trycCALLform c{CFLAG:TARGET:캐릭터번호}onSexualAttack
+				;
+			catch
+				CALL fallbackOnSexualAttack
+			endcatch
+		else
+			TFLAG:이번턴성공격 = 0
+			trycCALLform c{CFLAG:TARGET:캐릭터번호}onNormalAttack
+				;
+			catch
+				CALL fallbackOnNormalAttack
+			endcatch
+		endif
+	; 다른 위치에 있을 경우
+	else
+		CALL processMoveEnemy
+	endif

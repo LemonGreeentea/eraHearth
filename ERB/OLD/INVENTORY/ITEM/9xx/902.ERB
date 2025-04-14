@@ -1,0 +1,27 @@
+﻿; 피임약
+@itemOption902()
+	RESULTS '= "[생리주기변경]"
+
+@itemExpl902()
+	RESULTS '= "사용시 생리 주기가 변화하여 임신 확률을 큰 폭으로 낮춘다."
+
+@isUsable902(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem902(targetIdx)
+#dim dynamic targetIdx
+
+	EXP:targetIdx:약물경험++
+	BASE:targetIdx:생리주기 = MAXBASE:MASTER:생리주기 / 4 - 1
+	
+	return 1
+
+@isEquipable902
+	return 0
+@isUnequipable902
+	return 0
+
+@onEquip902
+@onUnequip902

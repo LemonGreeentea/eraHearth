@@ -1,0 +1,24 @@
+﻿; 음마의반지
+@itemOption1702()
+	RESULTS '= "[마법공격+1][키스오브데스]"
+
+@itemExpl1702()
+	RESULTS '= "찝찝한 마력이 흐르는 짙은 보라색 반지다."
+
+@isUsable1702(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1702(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1702
+	return 1
+@isUnequipable1702
+	return 1
+
+@onEquip1702
+	ABL:MASTER:마법공격 += 1
+
+@onUnequip1702
+	ABL:MASTER:마법공격 -= 1

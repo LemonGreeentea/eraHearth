@@ -1,0 +1,29 @@
+﻿@speak(charaIdx, string)
+#dim dynamic charaIdx
+#dims dynamic string
+
+	if CFLAG:charaIdx:대사색상
+		setColor CFLAG:charaIdx:대사색상
+	endif
+
+	if charaIdx == MASTER
+		CALL showImage(@"FACE_MASTER_{CFLAG:MASTER:태생}", 10)
+		printForm %NAME:MASTER% : 
+	else
+		printForm %CALLNAME:charaIdx% %NAME:charaIdx% : 
+	endif
+
+	printFormW %string%
+	resetColor
+
+	; RESULT sideeffect때문에
+	return RESULT
+
+@speakNPC(npcNo, string)
+#dim dynamic npcNo
+#dims dynamic string
+	
+	CALL speak(getChara(npcNo), string)
+
+	; RESULT sideeffect때문에
+	return RESULT

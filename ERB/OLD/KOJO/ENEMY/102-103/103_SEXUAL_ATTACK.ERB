@@ -1,0 +1,37 @@
+﻿@c103Parasite
+#dim dynamic parasiteIdx
+#dim dynamic attackedIdx
+
+	for parasiteIdx, 101, 200
+		if strlens(CFLAGNAME:(200 + parasiteIdx)) && !isParasiteInside(parasiteIdx) && isAttackableBodyPart(parasiteIdx) && isHole(parasiteIdx)
+			CALLf pushShuffle(parasiteIdx, 1)
+		endif
+	next
+	
+	if isShuffleEmpty()
+		return 0
+	endif
+	
+	attackedIdx = popShuffle()
+	TFLAG:이번턴성공격 = attackedIdx
+	
+	printFormL %kr(NAME:TARGET, "이", "가")% 꾸물거리며 %CALLNAME:MASTER%의 %partStr(attackedIdx)% 안으로 기어들어간다
+	printFormL %kr(CALLNAME:MASTER, "은", "는")% [기생]상태가 되었다.
+	CALL insertIntoMaster(attackedIdx, 3)
+	CFLAG:TARGET:기생성공 = 1
+	
+	return 1
+
+@c103onSexualAttack
+
+	; 5%확률로 기생
+	if RAND:20 == 0
+		CALL c103Parasite
+		; 실패했을 경우 음침한 슬라임과 같음
+		if !RESULT
+			CALL c102onSexualAttack
+		endif
+	; 그 외의 경우 음침한 슬라임과 같음
+	else
+		CALL c102onSexualAttack
+	endif

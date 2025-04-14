@@ -1,0 +1,7 @@
+
+# Savefiles
+sav/*
+
+# Emuera debug
+debug/*
+emuera.log

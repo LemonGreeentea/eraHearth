@@ -1,0 +1,24 @@
+﻿; 하얀셔츠
+@itemOption1201()
+	RESULTS '= "[방어력+2]"
+
+@itemExpl1201()
+	RESULTS '= "조금 구겨졌지만 활동할 때 불편함이 없는 하얀 셔츠다."
+
+@isUsable1201(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1201(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1201
+	return 1
+@isUnequipable1201
+	return 1
+
+@onEquip1201
+	ABL:MASTER:방어력 += 2
+
+@onUnequip1201
+	ABL:MASTER:방어력 -= 2

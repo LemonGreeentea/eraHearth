@@ -1,0 +1,23 @@
+﻿; 평범한모자
+@itemOption1101()
+	RESULTS '= "[방어력+2]"
+@itemExpl1101()
+	RESULTS '= "평범한 모자다."
+
+@isUsable1101(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1101(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1101
+	return 1
+@isUnequipable1101
+	return 1
+
+@onEquip1101
+	ABL:MASTER:방어력 += 2
+
+@onUnequip1101
+	ABL:MASTER:방어력 -= 2

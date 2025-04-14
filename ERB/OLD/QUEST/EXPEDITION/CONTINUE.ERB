@@ -1,0 +1,104 @@
+﻿@continueExpeditionShopMenu
+
+	; todo create 3rd floor and more
+
+	print 지금은 미궁을 탐험하는 중이다(
+	fontBold
+	setColor 0x777777
+	print 일부 메뉴 사용 불가
+	fontRegular
+	resetColor
+	PRINTL )
+
+	print (현재 위치 : 
+	
+	CALL showLabyrinthFloor()
+	
+	PRINTL )
+	
+	PRINTL
+	barstr BASE:MASTER:체력, MAXBASE:MASTER:체력, 10
+	printFormL 체력 : %RESULTS% ({BASE:MASTER:체력}/{MAXBASE:MASTER:체력})
+
+	barstr BASE:MASTER:마력, MAXBASE:MASTER:마력, 10
+	printFormL 마력 : %RESULTS% ({BASE:MASTER:마력}/{MAXBASE:MASTER:마력})
+	drawLine
+	
+	PRINTL
+	
+	if !FLAG:미궁상층발견
+		setColor 0x777777
+	endif
+	if FLAG:미궁위치 == 1
+		PRINTLC [0] - 탐사를 종료한다
+	else
+		PRINTLC [0] - 상층으로 이동한다
+	endif
+	resetColor
+
+	PRINTLC [1] - 주변을 탐색한다
+	
+	if !FLAG:미궁하층발견
+		setColor 0x777777
+	endif
+	PRINTLC [2] - 하층으로 나아간다
+	resetColor
+	PRINTL
+	
+	PRINTLC [3] - 미궁의 계약
+	PRINTLC [4] - 잠시 휴식한다
+
+@continueExpeditionHandleResult
+	
+	if RESULT == 0
+		if !FLAG:미궁상층발견
+			CALL systemError("미궁의 상층으로 가는 길을 발견하지 못했습니다")
+			return 0
+		endif
+
+		if FLAG:미궁위치 == 1
+			FLAG:원정중 = 0
+
+			PRINTW 원정을 종료합니다
+
+			begin shop
+		else
+			FLAG:미궁위치 -= 1
+			FLAG:미궁상층발견 = 0
+			FLAG:미궁하층발견 = 1
+			FLAG:미궁현재층탐색수 = 0
+
+			CALL showLabyrinthFloor()
+			printFormW %krPost(labyrinthFloorText(), "으로", "로")% 이동했다
+		endif
+	elseif RESULT == 1
+		; nop
+		CALL expedition
+	elseif RESULT == 2
+		if !FLAG:미궁하층발견
+			CALL systemError("미궁의 하층으로 가는 길을 발견하지 못했습니다")
+			return 0
+		endif
+
+		if FLAG:미궁위치 == 3
+			CALL bossBattle
+		else
+			FLAG:미궁위치 += 1
+			FLAG:미궁상층발견 = 1
+			FLAG:미궁하층발견 = 0
+			FLAG:미궁현재층탐색수 = 0
+			
+			CALL showLabyrinthFloor()
+			printFormW %krPost(labyrinthFloorText(), "으로", "로")% 이동했다
+		endif
+	elseif RESULT == 3
+		; 계약 체결은 턴 소모 없음
+		CALL labyrinthContract
+		return 0
+	elseif RESULT == 4
+		CALL expeditionTurnEnd
+	else
+		return 0
+	endif
+
+	return 1

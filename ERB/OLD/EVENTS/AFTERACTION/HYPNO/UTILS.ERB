@@ -1,0 +1,88 @@
+﻿@startHypno
+
+	FLAG:최면중 = 1
+	PRINTL
+
+	setBgColor 0xffffff
+	setBgColor 0xcccccc
+	setBgColor 0x999999
+	setBgColor 0x666666
+	setBgColor 0x333333
+	resetBgColor
+	
+	CALL sleepMaster
+	
+	EXP:MASTER:최면경험++
+	
+@endHypno
+
+	FLAG:최면중 = 0
+	twait 100, 0
+	PRINTL .
+	twait 100, 0
+	PRINTL .
+	twait 100, 0
+	PRINTL .
+	twait 100, 0
+	
+	CALL wakeupMaster
+
+@hypnoSex
+#dim dynamic equipSlotIdx
+#dim dynamic partIdx
+#dim dynamic expResult, 200
+
+	for equipSlotIdx, 11, 19
+		CALL unequipMasterEquipsSilently(equipSlotIdx)
+	next
+
+	repeat BASE:MASTER:최면심도
+		partIdx = getSexualAtkBodyPart()
+
+		expResult:partIdx += (1 + RAND:2)
+	rend
+	
+	for partIdx, 101, 200
+		if !expResult:partIdx
+			continue
+		endif
+
+		EXP:MASTER:partIdx += expResult:partIdx
+		printFormL %EXPNAME:partIdx%+{expResult:partIdx}
+		
+		CALL increaseArousal(partIdx, expResult:partIdx * 100)
+
+		if isInsertablePart(partIdx) && RAND:5 < 4
+			CALL addMobChara(1401)
+			CALL insertIntoMaster(partIdx, 1)
+			
+			CALL cumIntoMaster(partIdx)
+			
+			CALL outFromMaster(partIdx, 1)
+			CALL delMobChara
+		endif
+	next
+
+@hypnoMasturbate
+#dim dynamic partIdx
+#dim dynamic expResult, 200
+
+	repeat BASE:MASTER:최면심도
+		partIdx = getOrdinarySexualAtkBodyPart()
+
+		expResult:partIdx += (1 + RAND:2)
+	rend
+	
+	for partIdx, 101, 200
+		if !expResult:partIdx
+			continue
+		endif
+
+		EXP:MASTER:partIdx += expResult:partIdx
+		EXP:MASTER:자위경험 += expResult:partIdx
+		printFormL %EXPNAME:partIdx%+{expResult:partIdx}
+	next
+	
+	for partIdx, 101, 200
+		CALL increaseArousal(partIdx, expResult:partIdx * 100)
+	next

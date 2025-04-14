@@ -1,0 +1,9 @@
+﻿@newQuest(questIdx)
+#dim dynamic questIdx
+
+	FLAG:퀘스트진행중 = 1
+	FLAG:퀘스트만기일 = FLAG:(questIdx * 10 + 1)
+	FLAG:퀘스트종류 = FLAG:(questIdx * 10 + 2)
+	FLAG:퀘스트대상 = FLAG:(questIdx * 10 + 3)
+	FLAG:퀘스트값 = FLAG:(questIdx * 10 + 4)
+	FLAG:퀘스트보수 = FLAG:(questIdx * 10 + 5)

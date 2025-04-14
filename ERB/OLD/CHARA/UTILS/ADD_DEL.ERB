@@ -1,0 +1,88 @@
+﻿@addCharaAtPos(charaIdx, charaPos)
+#dim dynamic charaIdx
+#dim dynamic charaPos
+
+	; 새로 추가할 캐릭터
+	addChara charaIdx
+	
+	; 존재하던 placeholder와 바꿈
+	swapChara getChara(charaIdx), charaPos
+	delChara getChara(1000 + charaPos)
+	
+	CALL randomizeChara(charaPos)
+
+@randomizeChara(charaIdx)
+#dim dynamic charaIdx
+#dim dynamic stdRate
+	
+	; 유전자 처리
+		BASE:charaIdx:유전자 = 1 + RAND:30
+
+	; 기술 처리
+
+		; 성교능숙
+		if RAND:100 < 50
+			ABL:charaIdx:성교기술 += 1 + (RAND:3)
+		endif
+	
+	; 재능 처리
+
+		;조루
+		if RAND:100 < 25
+			TALENT:charaIdx:조루 = 1
+		endif
+	
+	; CFLAG 처리
+	
+		; 성병 처리
+		; 성병 기본 비율 15%
+		stdRate = FLAG:성병보균율
+		
+		; 인간이 아닐 경우 2배 증가
+		if CFLAG:charaIdx:종족 != 1
+			stdRate *= 2
+		endif
+
+		if RAND:1000 < stdRate
+			CFLAG:charaIdx:성병보균자 = 1
+		endif
+
+@delCharaAtPos(charaPos)
+#dim dynamic charaIdx
+#dim dynamic charaPos
+	
+	charaIdx = CFLAG:charaPos:캐릭터번호
+
+	; placholder를 해당 위치에 삽입
+	addchara (1000 + charaPos)
+	swapChara getChara(1000 + charaPos), charaPos
+
+	; 밀려난 캐릭터 삭제
+	delchara getChara(charaIdx)
+
+@addMonster(charaIdx)
+#dim dynamic charaIdx
+
+	CALL addCharaAtPos(charaIdx, 1)
+	TARGET = 1
+
+@addMobChara(charaIdx)
+#dim dynamic charaIdx
+
+	CALL addCharaAtPos(charaIdx, 2)
+	TARGET = 2
+
+@addParasite(charaIdx)
+#dim dynamic charaIdx
+
+	CALL addCharaAtPos(charaIdx, 3)
+	TARGET = 3
+
+@delMonster
+	CALL delCharaAtPos(1)
+
+@delMobChara
+	CALL delCharaAtPos(2)
+
+@delParasite
+	CALL delCharaAtPos(3)

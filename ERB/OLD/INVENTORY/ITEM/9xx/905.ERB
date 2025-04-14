@@ -1,0 +1,27 @@
+﻿; 자궁축소약
+@itemOption905()
+	RESULTS '= "[자궁크기-100]"
+
+@itemExpl905()
+	RESULTS '= "사용시 자궁의 크기가 줄어든다."
+
+@isUsable905(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem905(targetIdx)
+#dim dynamic targetIdx
+
+	EXP:targetIdx:약물경험++
+	BASE:targetIdx:자궁크기 = LIMIT(BASE:targetIdx:자궁크기 - 100, 100, 50000)
+	
+	return 1
+
+@isEquipable905
+	return 0
+@isUnequipable905
+	return 0
+
+@onEquip905
+@onUnequip905

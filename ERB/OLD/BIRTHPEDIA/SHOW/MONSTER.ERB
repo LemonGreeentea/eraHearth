@@ -1,0 +1,110 @@
+﻿@showMonsterBirthPedia
+#dim dynamic monsterLevel
+#dim dynamic monsterIdx
+
+	monsterLevel = 1
+
+$showLoop
+
+	clearLine 99999
+	printFormL 미궁의 생물도감 - {monsterLevel}층
+	PRINTL
+	drawLine
+	PRINTL
+	
+	for monsterIdx, monsterLevel * 100, monsterLevel * 100 + 100
+		existCsv monsterIdx
+		if RESULT
+			printForm [{monsterIdx}]\ 
+			
+			setColor 0xcccc00
+			printForm %CSVCALLNAME(monsterIdx)%\ 
+			resetColor
+			
+			printForm %CSVNAME(monsterIdx)% (
+			
+			if birthPediaCollectionCount(monsterIdx) == 30
+				setColor 0x0033ff
+			elseif birthPediaCollectionCount(monsterIdx) > 20
+				setColor 0x334ebd
+			elseif birthPediaCollectionCount(monsterIdx) > 10
+				setColor 0x5252a3
+			elseif birthPediaCollectionCount(monsterIdx) > 0
+				setColor 0x75759e
+			else
+				setColor 0x636363
+			endif
+			printForm {birthPediaCollectionCount(monsterIdx)}\ 
+			resetColor
+			
+			printFormL / 30)
+		endif
+	next
+	
+	PRINTL
+	drawLine
+	
+	if monsterLevel == 1
+		setColor 0x777777
+	endif
+
+	print [1] - 이전 층으로 
+	resetColor
+	
+	if monsterLevel == 3
+		setColor 0x777777
+	endif
+
+	PRINTL [2] - 다음 층으로 
+	resetColor
+
+	PRINTL [0] - 돌아가기
+	
+	input
+	
+	if RESULT == 1
+		monsterLevel -= 1
+	elseif RESULT == 2
+		monsterLevel += 1
+	elseif RESULT == 0
+		return
+	else
+		monsterIdx = RESULT
+		existCsv monsterIdx
+
+		if !RESULT
+			CALL systemError("잘못된 입력입니다")
+			clearLine 2
+		else
+			setColor 0xcccc00
+			printForm %CSVCALLNAME(monsterIdx)%\ 
+			resetColor
+
+			printFormL %CSVNAME(monsterIdx)%
+
+			trycCALLform c{monsterIdx}BirthPedia
+				fontItalic
+				printFormL %RESULTS:0%
+				fontRegular
+				
+				setColor 0x77cccc
+				printFormL 출현 확률 {100 * EnemyPopulation:monsterIdx / enemyPopulation(monsterLevel)}\%
+				resetColor
+				
+				if EnemyPopulation:monsterIdx > enemyPopulation(monsterLevel) / 5
+					printFormL (최근 이 적이 대량으로 목격된다는 보고가 있습니다)
+				endif
+
+				setColor 0xcc00cc
+				printFormL %RESULTS:1%
+				resetColor
+				printFormL %RESULTS:2%
+			catch
+				CALL colorPrint(0x888888, @"이 몬스터에 대한 상세 설명이 없습니다.")
+			endcatch
+			wait
+		endif
+	endif
+	
+	monsterLevel = limit(monsterLevel, 1, 3)
+	goto showLoop

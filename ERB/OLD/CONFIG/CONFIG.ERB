@@ -1,0 +1,106 @@
+﻿@configMenu
+
+	clearLine 99999
+
+$inputLoop
+	printFormL [1] - 성병 보균율을 설정한다(현재 : {FLAG:성병보균율 / 10}.{FLAG:성병보균율 % 10}\%)
+	printFormL [2] - 최면 이벤트 확률을 설정한다(현재 : {FLAG:최면이벤트확률}\%)
+	printFormL [3] - 성희롱 확률을 설정한다(현재 : {FLAG:성희롱확률}\%)
+	printFormL [4] - 체포 확률을 설정한다(현재 : {FLAG:체포확률}\%)
+	PRINTL
+	printFormL [0] - 돌아간다
+
+	input
+	
+	if RESULT == 1
+		CALL stdConfig
+	elseif RESULT == 2
+		CALL hypnoConfig
+	elseif RESULT == 3
+		CALL sexualharassmentConfig
+	elseif RESULT == 4
+		CALL arrestConfig
+	elseif RESULT == 0
+		return
+	else
+		CALL systemError("잘못된 입력입니다")
+		clearLine 2
+	endif
+
+	goto inputLoop
+
+@stdConfig
+
+	PRINTW 모브 캐릭터의 성병 보균율을 설정합니다.
+	PRINTW 이미 존재하는 캐릭터에 대해서는 변경 사항이 적용되지 않습니다.
+	printFormL 새 값을 입력해주세요(현재 : {FLAG:성병보균율} 단위 : 0.1\%)
+	
+$inputLoop
+
+	input
+
+	if 0 <= RESULT && RESULT <= 1000
+		FLAG:성병보균율 = RESULT
+
+		CALL systemNotify("변경이 완료되었습니다")
+	else
+		PRINTW 잘못된 값입니다
+		goto inputLoop
+	endif
+
+@hypnoConfig
+
+	PRINTW 최면 이벤트의 발생 확률을 설정합니다.
+	PRINTW 최면 심도에 정비례하여 발생 확률이 증가하며, 최대치를 설정하는 것이기 때문에 체감 확률이 낮아질 수 있습니다.
+	printFormL 새 값을 입력해주세요(현재 : {FLAG:최면이벤트확률} 단위 : 1\%)
+	
+$inputLoop
+
+	input
+
+	if 0 <= RESULT && RESULT <= 100
+		FLAG:최면이벤트확률 = RESULT
+
+		CALL systemNotify("변경이 완료되었습니다")
+	else
+		PRINTW 잘못된 값입니다
+		goto inputLoop
+	endif
+
+@sexualharassmentConfig
+
+	PRINTW 성희롱 이벤트의 발생 확률을 설정합니다.
+	PRINTW 성적 명성 및 다양한 소질에 따라 확률이 변동하기 때문에 체감 확률과 다를 수 있습니다.
+	printFormL 새 값을 입력해주세요(현재 : {FLAG:성희롱확률} 단위 : 1\%)
+	
+$inputLoop
+
+	input
+
+	if 0 <= RESULT && RESULT <= 100
+		FLAG:성희롱확률 = RESULT
+
+		CALL systemNotify("변경이 완료되었습니다")
+	else
+		PRINTW 잘못된 값입니다
+		goto inputLoop
+	endif
+
+@arrestConfig
+
+	PRINTW 체포 이벤트의 발생 확률을 설정합니다.
+	PRINTW 악명에 따라 확률이 변동하기 때문에 체감 확률과 다를 수 있습니다.
+	printFormL 새 값을 입력해주세요(현재 : {FLAG:체포확률} 단위 : 1\%)
+	
+$inputLoop
+
+	input
+
+	if 0 <= RESULT && RESULT <= 100
+		FLAG:체포확률 = RESULT
+
+		CALL systemNotify("변경이 완료되었습니다")
+	else
+		PRINTW 잘못된 값입니다
+		goto inputLoop
+	endif

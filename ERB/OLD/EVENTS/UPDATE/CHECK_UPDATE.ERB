@@ -1,0 +1,172 @@
+﻿@checkUpdate(forceUpdate)
+#dim dynamic forceUpdate
+
+	if LASTLOAD_VERSION < GAMEBASE_VERSION || forceUpdate
+		CALL initNPC
+		CALL updateCsv
+		CALL resetAllEnemies
+	endif
+
+	if LASTLOAD_VERSION < GAMEBASE_VERSION
+		CALL colorPRINTW(0xcc0000, "※이전 버전의 세이브 데이터를 감지했습니다※")
+		PRINTW eraRb는 아직 테스트중이기 때문에 이전 버전의 세이브 데이터를 불러올 경우 정상적으로 작동하지 않을 수 있습니다.
+		PRINTW 이후 세이브 파일을 다시 저장하면 이후 이 메시지는 표시되지 않습니다.
+		PRINTW 이하의 내용을 반드시 확인하는 것을 권장합니다
+		
+		PRINTL
+
+		forceWait
+	elseif forceUpdate
+		PRINTW 수동으로 업데이트 처리를 진행합니다
+	endif
+
+	; 업데이트는 버전에 따라 순차적으로 진행해야 됨
+	if LASTLOAD_VERSION < 7
+		if !FLAG:최면이벤트확률
+			PRINTW 최면 이벤트 확률이 추가되었으니 설정에서 조정해주세요
+			FLAG:최면이벤트확률 = 5
+		endif
+	endif
+
+	if LASTLOAD_VERSION < 8
+		; FLAG 위치 변경됨
+		FLAG:성병보균율 = FLAG:10
+		FLAG:최면이벤트확률 = FLAG:11
+
+		if !FLAG:성희롱확률
+			PRINTW 성희롱 확률이 추가되었으니 설정에서 조정해주세요
+			FLAG:성희롱확률 = 10
+		endif
+	endif
+
+	if LASTLOAD_VERSION < 9
+		PRINTW 게임 스타트 옵션이 추가되어 새 게임 시작을 권장합니다
+	endif
+
+	if LASTLOAD_VERSION < 11
+		PRINTL v0.011
+		PRINTW 미궁 탐사 및 의뢰 리워크를 진행중입니다
+		PRINTW 우선 현재 진행중인 의뢰를 초기화합니다(이후 업데이트에서도 다시 초기화될 수 있습니다)
+
+		FLAG:퀘스트진행중 = 0
+	endif
+
+	if LASTLOAD_VERSION < 12
+		PRINTL v0.012
+		PRINTW 일부 NPC가 추가되었습니다
+		
+		addChara 2001
+		
+		FLAG:마석환율 = 75 + RAND:50
+	endif
+	
+	if LASTLOAD_VERSION < 13
+		PRINTL v0.013
+		PRINTW 일부 NPC가 추가되었습니다
+		printFormW %CALLNAME:MASTER%의 대사 색상이 추가되었습니다
+		printFormW 기본으로 적용되던 [피임결계]가 태생 [성녀] 이외에는 적용되지 않도록 변경되었습니다
+
+		CALL initNPC
+		
+		if CFLAG:MASTER:성격 == 1
+			CFLAG:MASTER:대사색상 = 0xb9fc00
+		elseif CFLAG:MASTER:성격 == 2
+			CFLAG:MASTER:대사색상 = 0xfca400
+		elseif CFLAG:MASTER:성격 == 3
+			CFLAG:MASTER:대사색상 = 0xff7aba
+		elseif CFLAG:MASTER:성격 == 4
+			CFLAG:MASTER:대사색상 = 0xaa55ff
+		elseif CFLAG:MASTER:성격 == 5
+			CFLAG:MASTER:대사색상 = 0x008cff
+		endif
+		
+		if CFLAG:MASTER:태생 != 5
+			TALENT:MASTER:피임결계 = 0
+		endif
+		
+		CALL speak(MASTER, "현재 대사 색상은 이렇습니다")
+	endif
+	
+	if LASTLOAD_VERSION < 14
+		PRINTL v0.014
+		PRINTW 캐릭터 유전자 및 유전자 도감이 추가되었습니다
+
+		CALL randomizeChara(getChara(2001))
+		CALL randomizeChara(getChara(2100))
+		CALL randomizeChara(getChara(2101))
+		CALL randomizeChara(getChara(2102))
+		CALL randomizeChara(getChara(2103))
+		CALL randomizeChara(getChara(2104))
+		CALL randomizeChara(getChara(2105))
+		CALL randomizeChara(getChara(2106))
+		CALL randomizeChara(getChara(2107))
+	endif
+	
+	if LASTLOAD_VERSION < 15
+		PRINTL v0.015
+		PRINTW 몬스터 개체 수가 추가되었습니다
+
+		CALL resetAllEnemies
+		
+		PRINTW 마석 환금이 추가되었습니다
+		
+		FLAG:마석환율 = 75 + RAND:50
+	endif
+
+	if LASTLOAD_VERSION < 16
+		PRINTL v0.016
+		PRINTW 미궁 탐사 중 계층간 이동 조건이 변경되었습니다
+		PRINTW 일부 몬스터의 구상을 수정했습니다
+		PRINTW 성당의 축복에 있던 오류를 수정했습니다
+		PRINTW 그 외 약간의 구상 추가
+	endif
+	
+	if LASTLOAD_VERSION < 17
+		PRINTL v0.017
+		PRINTW 신체 정보가 추가되었습니다
+		PRINTW 기본값으로 설정합니다
+		
+		BASE:MASTER:허리둘레 = 650
+		BASE:MASTER:엉덩이둘레 = 800
+
+		MAXBASE:MASTER:허리둘레 = 2000
+		MAXBASE:MASTER:엉덩이둘레 = 2000
+		
+		MAXBASE:MASTER:영양상태 = getMasterMetabolicRate()
+		
+	endif
+
+	if LASTLOAD_VERSION < 18
+		PRINTL v0.018
+		
+		CALL systemNotify("명성 관련 이벤트가 추가되었습니다")
+		CALL systemNotify("체포 이벤트 설정이 추가되었습니다")
+		CALL systemNotify("창관을 준비중입니다")
+		
+		CFLAG:MASTER:기본명성 *= 100
+		CFLAG:MASTER:성적명성 *= 100
+		CFLAG:MASTER:최면명성 *= 100
+		CFLAG:MASTER:악명 *= 100
+
+		; 카르마 제거
+		CFLAG:MASTER:11 = 0
+		
+		; 최초플래그를 erh에서 관리
+		firstSlaveryFlag = FLAG:203
+		FLAG:203 = 0
+
+		FLAG:체포확률 = 10
+		FLAG:명성확률 = 10
+
+	endif
+	
+	if LASTLOAD_VERSION < 19
+		PRINTL v0.019
+		
+		CALL systemNotify("연금술이 추가되었습니다")
+		
+		if CFLAG:MASTER:태생 == 1
+			ABL:MASTER:연금술 = 1
+		endif
+	endif
+

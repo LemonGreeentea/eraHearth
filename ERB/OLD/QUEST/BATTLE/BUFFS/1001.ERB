@@ -1,0 +1,12 @@
+﻿@onBuff1001(charaIdx)
+#dim dynamic charaIdx
+
+	TCVAR:charaIdx:방어력 += ABL:charaIdx:방어력
+
+@progressBuff1001(charaIdx)
+#dim dynamic charaIdx
+
+@offBuff1001(charaIdx)
+#dim dynamic charaIdx
+
+	TCVAR:charaIdx:방어력 -= ABL:charaIdx:방어력

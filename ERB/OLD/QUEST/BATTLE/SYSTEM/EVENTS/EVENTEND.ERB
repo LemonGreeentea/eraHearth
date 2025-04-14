@@ -1,0 +1,44 @@
+﻿@EVENTEND
+#dim dynamic partIdx
+
+	FLAG:전투중 = 0
+	TFLAG:이번턴성공격 = 0
+
+	; 삽입상태초기화
+	for partIdx, 101, 200
+		CALL outFromMaster(partIdx, 1)
+	next
+	
+	EXP:MASTER:전투경험++
+
+	; killed the monster
+	if BASE:TARGET:체력 <= 0
+	
+		EXP:MASTER:전투승리경험++
+		CFLAG:MASTER:전투결과++
+		
+		CALL onEnemyDown
+
+	; 기생
+	elseif CFLAG:TARGET:기생성공
+		CALL systemNotify(@"%CALLNAME:TARGET% %kr(NAME:TARGET, "은", "는")% %CALLNAME:MASTER%에게 기생해버렸습니다...")
+		
+		EXP:MASTER:전투패배경험++
+	; 패배
+	else
+		EXP:MASTER:전투패배경험++
+		CFLAG:MASTER:전투결과--
+
+		; Check if cancel this quest or keep going with the wounded monster.
+		printFormL %kr(NAME:TARGET, "과의", "와의")% 전투에서 힘이 다한 %kr(NAME:MASTER, "은", "는")% 눈앞이 깜깜해졌다...
+		CALL banishFromLabyrinth
+	endif
+
+	; Remove the monster
+	CALL delMonster
+	
+	CFLAG:MASTER:전투결과 = LIMIT(CFLAG:MASTER:전투결과, -10, 10)
+
+	CALL statsUpgrade
+
+	begin shop

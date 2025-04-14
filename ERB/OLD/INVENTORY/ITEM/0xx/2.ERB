@@ -1,0 +1,21 @@
+﻿; 화살
+@itemOption2()
+	RESULTS '= "[공격시소모]"
+
+@itemExpl2()
+	RESULTS '= "무릇 남을 해하려는 자는 관을 두 개 짜야 하는 법이다.\n다만 뛰어난 활잡이들은 하나로도 충분하다."
+
+@isUsable2(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem2(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable2
+	return 0
+@isUnequipable2
+	return 0
+
+@onEquip2
+@onUnequip2

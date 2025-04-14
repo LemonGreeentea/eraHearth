@@ -1,0 +1,34 @@
+﻿; 모유체질약
+@itemOption908()
+	RESULTS '= "[획득:모유체질]"
+
+@itemExpl908()
+	RESULTS '= "사용시 모유체질을 얻어, 임신 중이 아니어도 모유를 낼 수 있게 된다."
+
+@isUsable908(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem908(targetIdx)
+#dim dynamic targetIdx
+
+	EXP:targetIdx:약물경험++
+	TALENT:targetIdx:모유체질 = !TALENT:targetIdx:모유체질
+	if TALENT:targetIdx:모유체질
+		printFormW %kr(NAME:targetIdx, "은", "는")% [모유체질]을 획득했다.
+	else
+		printFormW %kr(NAME:targetIdx, "은", "는")% [모유체질]을 잃었다.
+	endif
+	
+	MAXBASE:targetIdx:모유 = MAX(100, MAXBASE:targetIdx:모유)
+
+	return 1
+
+@isEquipable908
+	return 0
+@isUnequipable908
+	return 0
+
+@onEquip908
+@onUnequip908

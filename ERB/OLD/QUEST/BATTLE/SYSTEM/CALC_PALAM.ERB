@@ -1,0 +1,93 @@
+﻿@calcPalam
+#dim dynamic partIdx
+	
+	; 굴복
+	if submissiveParam() > 0
+		UP:굴복 += SOURCE:MASTER:피격
+	endif
+
+	; 성감 / 욕정
+	for partIdx, 101, 200
+		if strlens(BASENAME:partIdx) == 0
+			continue
+		endif
+
+		; 기본적으로 SOURCE를 받아옴
+		CALL increaseArousalToUp(partIdx, SOURCE:MASTER:partIdx)
+
+		UP:욕정 += PALAM:MASTER:partIdx / 500
+	next
+	
+	; 사정당할 경우 욕정 증가. 발정일 경우 3배 효과적임
+	UP:욕정 += (SOURCE:MASTER:피사정) * (2 * TALENT:MASTER:발정 + 1)
+
+	; 순종
+	UP:순종 += power(2, min(submissiveParam() / 2, 20))
+	; 피격시 순종 증가
+	UP:순종 += SOURCE:MASTER:피격
+
+	if TALENT:MASTER:겁쟁이
+		TIMES UP:순종, 2
+	endif
+	
+	; 공격 시 순종 차감
+	UP:순종 -= SOURCE:MASTER:공격
+
+	; 기본 사정감 증가
+	if TFLAG:이번턴성공격
+		; 부위 경험 반영
+		if isBodyPart(TFLAG:이번턴성공격)
+			PALAM:TARGET:사정 += 900 + MIN(2000, EXP:MASTER:(TFLAG:이번턴성공격))
+		; fallback
+		else
+			PALAM:TARGET:사정 += 900
+		endif
+	endif
+
+	; 피격시 고통 증가
+	UP:고통 += SOURCE:MASTER:피격 * 5
+	
+	; 성행위 부위 상태에 따라 고통 증가
+	if isBodyPart(TFLAG:이번턴성공격)
+		if BASE:MASTER:(TFLAG:이번턴성공격) < 60
+			UP:고통 += 10 * power(2, (100 - BASE:MASTER:(TFLAG:이번턴성공격)) / 10 - 2)
+		endif
+	endif
+
+	; 삽입체크
+	if CFLAG:MASTER:삽입질 == 1
+		if BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50 > 30
+			UP:고통 += 1000 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 1000 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50 > 25
+			UP:고통 += 500 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 800 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50 > 20
+			UP:고통 += 200 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 600 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50 > 10
+			UP:고통 += 100 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 400 * (BASE:MASTER:보지조임 + BASE:TARGET:자지크기 - 50)
+		endif
+	endif
+
+	if CFLAG:MASTER:삽입애널 == 1
+		if BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50 > 30
+			UP:고통 += 1000 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 1000 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50 > 25
+			UP:고통 += 500 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 800 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50 > 20
+			UP:고통 += 200 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 600 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+		elseif BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50 > 10
+			UP:고통 += 100 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+			PALAM:TARGET:사정 += 400 * (BASE:MASTER:애널조임 + BASE:TARGET:자지크기 - 50)
+		endif
+	endif
+
+	; 조루 처리
+	if TALENT:TARGET:조루
+		TIMES PALAM:TARGET:사정, 1.5
+	endif

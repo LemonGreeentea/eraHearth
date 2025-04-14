@@ -1,0 +1,23 @@
+﻿@COM_ABLE23
+
+	return !isMasterDown() && isSameLocation()
+
+@COM23
+
+	PRINTL 적에게 마구잡이로 주먹질했다
+	
+	if !isSameLocation()
+		printFormL 하지만 %kr(getAmmoName(), "이", "가")% 부족하여 실패했다...
+		return 0
+	endif
+
+	if RAND:10 < 2
+		PRINTL 빗나갔다!
+		return 1
+	endif
+	
+	LOSEBASE:체력 = randomizeDamage(10 * MAX(1, getActualAtk(MASTER) / 2 - getActualDef(TARGET)))
+	
+	CALL useAmmo()
+
+	return 1

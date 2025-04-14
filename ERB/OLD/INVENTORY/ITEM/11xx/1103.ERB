@@ -1,0 +1,23 @@
+﻿; 가벼운투구
+@itemOption1103()
+	RESULTS '= "[방어력+4]"
+@itemExpl1103()
+	RESULTS '= "가벼운 재질의 금속으로 만들어진 투구다."
+
+@isUsable1103(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1103(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1103
+	return 1
+@isUnequipable1103
+	return 1
+
+@onEquip1103
+	ABL:MASTER:방어력 += 4
+
+@onUnequip1103
+	ABL:MASTER:방어력 -= 4

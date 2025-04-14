@@ -1,0 +1,87 @@
+﻿@lewdParam
+#function
+#dim dynamic parameter
+
+	parameter += ABL:MASTER:욕망 * 3
+	if TALENT:MASTER:발정
+		parameter += 15 * (MAXBASE:MASTER:이성 - BASE:MASTER:이성) / MAXBASE:MASTER:이성
+	endif
+	
+	if TARGET
+		parameter += ABL:TARGET:성교기술
+	endif
+	
+	if FLAG:성교합의
+		parameter += 5
+	endif
+	
+	if TALENT:MASTER:음란
+		parameter += 10
+	endif
+	
+	if TALENT:MASTER:절제
+		parameter -= 5
+	endif
+
+	parameter += isWeaknessAttacked()
+
+	if BASE:MASTER:최면심도 > 50
+		parameter += 5
+	endif
+	
+	returnf parameter
+
+@isMasterLewd
+#function
+	returnf lewdParam() > 25
+
+@submissiveParam
+#function
+#dim dynamic parameter
+
+	parameter += ABL:MASTER:순종 * 3
+
+	if TARGET
+		parameter += ABL:TARGET:전투기술
+	endif
+
+	if TALENT:MASTER:겁쟁이
+		parameter += 15 * (MAXBASE:MASTER:체력 - BASE:MASTER:체력) / MAXBASE:MASTER:체력
+	endif
+
+	if FLAG:성교합의
+		parameter += 10
+	endif
+
+	if TALENT:MASTER:겁쟁이
+		parameter += 6
+	endif
+
+	if TALENT:MASTER:육변기
+		parameter += 99
+	endif
+
+	if BASE:MASTER:최면심도 > 10
+		parameter += (BASE:MASTER:최면심도 / 5)
+	endif
+
+	returnf parameter
+
+@isMasterSubmissive
+#function
+
+	returnf submissiveParam() > 25
+
+@isWeaknessAttacked
+#function
+#dim dynamic partIdx
+#dim dynamic parameter
+
+	for partIdx, 101, 200
+		; 부위약점인데 삽입중이면 +1가산
+		if TALENT:MASTER:partIdx && CFLAG:MASTER:(200 + partIdx)
+			parameter++
+		endif
+	next
+	
+	returnf parameter

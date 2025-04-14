@@ -1,0 +1,28 @@
+﻿; 미약
+@itemOption901()
+	RESULTS '= "[혈중미약농도+20]"
+
+@itemExpl901()
+	RESULTS '= "버림받은 이들의 낙원. 가진 것도, 신앙도 없는 이들에게는 이 작은 약이 유일한 약속이요 구원이다."
+
+@isUsable901(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem901(targetIdx)
+#dim dynamic targetIdx
+
+	EXP:targetIdx:약물경험++
+	BASE:targetIdx:혈중미약농도 += 20
+	BASE:targetIdx:혈중미약농도 = LIMIT(BASE:targetIdx:혈중미약농도, 0, MAXBASE:targetIdx:혈중미약농도)
+	
+	return 1
+
+@isEquipable901
+	return 0
+@isUnequipable901
+	return 0
+
+@onEquip901
+@onUnequip901

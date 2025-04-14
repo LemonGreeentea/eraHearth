@@ -1,0 +1,129 @@
+﻿@showInventory
+#dim dynamic itemIdx
+#dim dynamic showCount
+#dim dynamic selectedItem
+#dim dynamic inventoryMode
+#dim dynamic isItemSelectable
+
+$inputLoop
+	clearLine 99999
+	PRINTL =인벤토리=
+	PRINTL
+	
+	if inventoryMode == 0
+		PRINTL 조사할 아이템을 선택해주세요
+	elseif inventoryMode == 1
+		PRINTL 사용할 아이템을 선택해주세요
+	endif
+	PRINTL
+
+	showCount = 0
+	for itemIdx, 1, 10000
+	
+		if !ITEM:itemIdx
+			continue
+		endif
+	
+		; No such item
+		if strlens(ITEMNAME:itemIdx) == 0
+			continue
+		endif
+		
+		; selectable check
+		if inventoryMode == 0
+			; every item is examinable
+			isItemSelectable = 1
+		elseif inventoryMode == 1
+			trycCALLform isUsable{itemIdx}(MASTER)
+				isItemSelectable = RESULT
+			catch
+				isItemSelectable = 0
+			endcatch
+			
+		endif
+
+		if !isItemSelectable
+			CALL colorPrint(0x888888, @"[{itemIdx, 4, RIGHT}] ")
+		else
+			printForm [{itemIdx, 4, RIGHT}]\ 
+		endif
+
+		printFormLC %ITEMNAME:itemIdx, 14, RIGHT%x{ITEM:itemIdx, 3, LEFT}
+		showCount++
+		if showCount % 4 == 0
+			PRINTL
+		endif
+		
+		resetColor
+	
+	next
+
+	PRINTL
+	PRINTL
+	print [0] - 돌아가기 [99999] - 
+	if inventoryMode == 1
+		CALL colorPrint(0x888888, "조회 / ")
+		PRINTL 사용
+	elseif inventoryMode == 0
+		print 조회 / 
+		CALL colorPrint(0x888888, "사용\n")
+	endif
+
+	input
+	selectedItem = RESULT
+	
+	if selectedItem == 0
+		return
+	elseif selectedItem == 99999
+		inventoryMode = (inventoryMode + 1) % 2
+		goto inputLoop
+	endif
+	
+	; deal with selected item
+	if inventoryMode == 0
+		CALL examineItem(selectedItem)
+	elseif inventoryMode == 1
+		CALL useInventory(selectedItem)
+	endif
+
+	goto inputLoop
+
+@examineItem(itemIdx)
+#dim dynamic itemIdx
+#dims dynamic itemExpl
+
+	PRINTL
+	drawLine
+	CALL colorPrint(0xcccc00, @"%ITEMNAME:itemIdx%\n")
+	drawLine
+
+	trycCALLform itemOption{itemIdx}
+		CALL colorPrint(0x88cccc, RESULTS)
+	catch
+		CALL colorPrint(0x888888, @" - 옵션 없음 - ")
+	endcatch
+	PRINTL
+	
+	trycCALLform itemExpl{itemIdx}
+		printFormL %RESULTS%
+	catch
+		CALL colorPrint(0x888888, @"이 아이템에 대한 상세 설명이 없습니다.")
+	endcatch
+	
+	wait
+
+@useInventory(itemIdx)
+#dim dynamic itemIdx
+
+	trycCALLform isUsable{itemIdx}(MASTER)
+		if RESULT
+			printFormW %NAME:MASTER%에게 %kr(ITEMNAME:itemIdx, "을", "를")% 사용했다.
+			trycCALLform onUseItem{itemIdx}(MASTER)
+				ITEM:itemIdx--
+			catch
+			endcatch
+		endif
+	catch
+		; cannot use this item
+	endcatch
+

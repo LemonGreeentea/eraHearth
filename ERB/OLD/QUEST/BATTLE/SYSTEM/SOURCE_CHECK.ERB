@@ -1,0 +1,79 @@
+﻿@SOURCE_CHECK
+
+	CALL afterBattleAction(0)
+
+@afterBattleAction(forceAblUp)
+#dim dynamic forceAblUp
+
+	SOURCE:MASTER:공격 = 1000 * (LOSEBASE:체력 / MAXBASE:TARGET:체력)
+	
+	if FLAG:억제의계약
+		repeat FLAG:억제의계약			
+			LOSEBASE:체력 += LOSEBASE:체력 / 10
+			LOSEBASE:마력 += LOSEBASE:마력 / 10
+		rend
+	endif
+	
+	BASE:TARGET:체력 -= LOSEBASE:체력
+	BASE:TARGET:마력 -= LOSEBASE:마력
+
+	LOSEBASE:체력 = 0
+	LOSEBASE:마력 = 0
+
+$enemyTurn
+
+	; Check if killed
+	if isTargetDown()
+		if !forceAblUp
+			begin aftertrain
+		endif
+
+		if forceAblUp
+			CALLEvent EVENTCOMEND
+		endif
+		return
+	endif
+	
+	CALL onEnemyTurn
+	
+	if BASE:MASTER:체력 > 0
+		SOURCE:MASTER:피격 = (1000 * LOSEBASE:체력) / MAXBASE:MASTER:체력
+	endif
+
+	BASE:MASTER:체력 -= LOSEBASE:체력
+	BASE:MASTER:마력 -= LOSEBASE:마력
+	
+	CALL onMasterAttacked(LOSEBASE:체력, LOSEBASE:마력)
+	
+	LOSEBASE:체력 = 0
+	LOSEBASE:마력 = 0
+
+	CALL calcPalam
+
+	if TCVAR:TARGET:추가행동 && !TCVAR:MASTER:추가행동
+		printFormL 추가 행동권이 남아있어 %NAME:TARGET%의 차례가 계속됩니다
+		TCVAR:TARGET:추가행동--
+		
+		CALL onBattleTurnEnd
+		goto enemyTurn
+	elseif TCVAR:MASTER:추가행동 && TCVAR:TARGET:추가행동
+		printFormL 서로에게 추가 행동권이 있기 떄문에 정상적으로 %CALLNAME:MASTER%의 차례가 돌아옵니다
+		TCVAR:MASTER:추가행동--
+		TCVAR:TARGET:추가행동--
+	endif
+
+	; Check battle end
+	if isBattleOver()
+		if !forceAblUp
+			begin aftertrain
+		endif
+		
+		if forceAblUp
+			CALLEvent EVENTCOMEND
+		endif
+		return
+	endif
+
+	if forceAblUp
+		CALLEvent EVENTCOMEND
+	endif

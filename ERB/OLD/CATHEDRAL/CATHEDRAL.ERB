@@ -1,0 +1,39 @@
+﻿@cathedral
+
+	PRINTL 성당에 도착했다.
+	PRINTL 장엄한 분위기 속에서 몇몇 수도자들이 작은 목소리로 이야기하고 있다.
+	
+	if CFLAG:MASTER:신앙심 < 0
+		printFormL 신성한 기운이 %kr(NAME:MASTER, "을", "를")% 답답하게 짓누르는 느낌이 들었다.
+	endif
+	
+	PRINTW
+
+$processInput
+
+	clearLine 99999
+	PRINTL
+	PRINTL [1] - 기도한다
+	PRINTL [2] - 봉헌한다
+	
+	if !TALENT:MASTER:피임결계
+		PRINTL [3] - 피임결계를 받는다
+	endif
+	PRINTL [0] - 나가기
+
+	input
+
+	if RESULT == 1
+		CALL pray
+	elseif RESULT == 2
+		CALL dedicate
+	elseif RESULT == 3
+		CALL contraBarrier
+	elseif RESULT == 0
+		return
+	else
+		CALL systemError("잘못된 입력입니다")
+		clearLine 2
+	endif
+	
+	goto processInput

@@ -1,0 +1,61 @@
+﻿@showBasicBodyInfo
+#dim dynamic partIdx
+
+	PRINTL 신체정보(기본)
+	
+	PRINTL
+	print 금일 대사량 
+	setColor 0xcccc00
+	printForm {MAXBASE:MASTER:영양상태}kcal
+	resetColor
+	
+	print  중 현재 섭취량 
+	
+	if BASE:MASTER:영양상태 < MAXBASE:MASTER:영양상태 / 3
+		setColor 0xcc0000
+	elseif BASE:MASTER:영양상태 < 2 * MAXBASE:MASTER:영양상태 / 3
+		setColor 0xcccc00
+	elseif BASE:MASTER:영양상태 < MAXBASE:MASTER:영양상태
+		setColor 0x00cc00
+	elseif BASE:MASTER:영양상태 < 4 * MAXBASE:MASTER:영양상태 / 3
+		setColor 0xcccc00
+	else
+		setColor 0xcc0000
+	endif
+	printFormL {BASE:MASTER:영양상태}kcal
+	resetColor
+	
+	PRINTL
+	for partIdx, 101, 200
+		if strlens(BASENAME:partIdx) == 0
+			continue
+		endif
+
+		printForm %partStrRaw(partIdx), 14, RIGHT% (감도Lv.{ABL:MASTER:partIdx}) : 
+
+		barstr BASE:MASTER:partIdx, MAX(MAXBASE:MASTER:partIdx, 1), 10
+		if BASE:MASTER:partIdx > 67
+			CALL colorPrint(0x00ff00, RESULTS)
+		elseif BASE:MASTER:partIdx > 33
+			CALL colorPrint(0xffff00, RESULTS)
+		else
+			CALL colorPrint(0xff0000, RESULTS)
+		endif
+		
+		if isMasterInserted(partIdx, 1)
+			print [삽입중]
+		elseif isMasterInserted(partIdx, 2)
+			print [음구삽입중]
+		elseif isMasterInserted(partIdx, 3)
+			print [기생중(슬라임)]
+		elseif isMasterInserted(partIdx, 4)
+			print [기생중(벌레)]
+		endif
+		
+		if isMasterInserted(partIdx, 6)
+			CALL colorPrint(0xcccccc, "[성병감염중]")
+		endif
+
+		PRINTL
+
+	next

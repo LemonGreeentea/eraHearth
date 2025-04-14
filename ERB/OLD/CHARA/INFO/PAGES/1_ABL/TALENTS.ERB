@@ -1,0 +1,17 @@
+﻿@showTalents
+#dim dynamic talentIdx
+#dim dynamic showCount
+
+	for talentIdx, 1, 1000
+		if TALENT:MASTER:talentIdx
+			showCount++
+			CALL printTalent(talentIdx)
+		endif
+
+		if showCount == 5
+			showCount = 0
+			PRINTL
+		endif
+	next
+
+	PRINTL

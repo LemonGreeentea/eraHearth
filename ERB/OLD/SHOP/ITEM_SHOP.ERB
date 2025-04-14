@@ -1,0 +1,27 @@
+﻿@itemShop
+
+	PRINTL 어디로 갈까?
+	printFormL [1] - 잡화점
+	printFormL [2] - 장비점
+	printFormL [3] - 도매상
+	printFormL [4] - 마석 환전소
+	printFormL [0] - 돌아가기
+
+$inputLoop
+	input
+	
+	if RESULT == 1
+		CALL itemShopMenu(0, 99)
+	elseif RESULT == 2
+		CALL itemShopMenu(1000, 1999)
+	elseif RESULT == 3
+		CALL wholesale
+	elseif RESULT == 4
+		CALL tradeCenter
+	elseif RESULT == 0
+		return
+	else
+		CALL systemError("잘못된 입력입니다")
+		clearLine 2
+		goto inputLoop
+	endif

@@ -1,0 +1,27 @@
+﻿; 임신가속약
+@itemOption907()
+	RESULTS '= "[임신일수-??(14~43)]"
+
+@itemExpl907()
+	RESULTS '= "사용시 임신 이후 출산까지의 기간이 짧아진다."
+
+@isUsable907(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem907(targetIdx)
+#dim dynamic targetIdx
+
+	EXP:targetIdx:약물경험++
+	MAXBASE:targetIdx:임신일수 = LIMIT(MAXBASE:targetIdx:임신일수 - (14 + RAND:30), 14, 300)
+	
+	return 1
+
+@isEquipable907
+	return 0
+@isUnequipable907
+	return 0
+
+@onEquip907
+@onUnequip907

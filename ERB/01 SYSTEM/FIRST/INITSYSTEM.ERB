@@ -1,0 +1,55 @@
+﻿@initSystem
+#dim dynamic mobIdx
+
+	FLAG:고정난수시드 = RAND:__INT_MAX__
+	
+	FLAG:성병보균율 = 150
+	FLAG:최면이벤트확률 = 5
+	FLAG:성희롱확률 = 5
+	FLAG:체포확률 = 10
+	FLAG:명성확률 = 10
+	
+	FLAG:마석환율 = 75 + RAND:50
+
+	; placeholder 캐릭터 추가
+	addChara 1001
+	addChara 1002
+	addChara 1003
+	
+	CALL initNPC
+
+	; CSV 값 수정
+	CALL updateCsv
+	
+	CALL resetAllEnemies
+
+@initNPC
+
+	; 떠돌이 상인
+	CALL addNpcIfNotExists(2001)
+	
+	; 성당의 수녀
+	CALL addNpcIfNotExists(2002)
+
+	; 신체거래 브로커
+	CALL addNpcIfNotExists(2100)
+	
+	; 신체거래 고객
+	CALL addNpcIfNotExists(2101)
+	CALL addNpcIfNotExists(2102)
+	CALL addNpcIfNotExists(2103)
+	CALL addNpcIfNotExists(2104)
+	CALL addNpcIfNotExists(2105)
+	CALL addNpcIfNotExists(2106)
+	CALL addNpcIfNotExists(2107)
+	
+	; 창관
+	CALL addNpcIfNotExists(2200)
+
+@addNpcIfNotExists(charaNo)
+#dim dynamic charaNo
+
+	if getChara(charaNo) < 0
+		addChara charaNo
+		CALL randomizeChara(getChara(charaNo))
+	endif

@@ -1,0 +1,151 @@
+﻿@talentCheck
+#dim dynamic partIdx
+
+	; 습득체크
+	if MAXBASE:MASTER:보지조임 - BASE:MASTER:보지조임 >= 30
+		printFormW 격렬한 성행위 끝에 %CALLNAME:MASTER%의 %kr(partStr(121), "은", "는")% 완전히 벌어져 버렸다...
+		CALL getTalent("허벌보지")
+	elseif TALENT:MASTER:허벌보지
+		printFormW 시간이 지난 덕에 %CALLNAME:MASTER%의 %kr(partStr(121), "은", "는")% 조금 아물은 것 같다.
+		CALL loseTalent("허벌보지")
+	endif
+	
+	if MAXBASE:MASTER:애널조임 - BASE:MASTER:애널조임 >= 30
+		printFormW 격렬한 성행위 끝에 %CALLNAME:MASTER%의 %kr(partStr(123), "은", "는")% 완전히 벌어져 버렸다...
+		CALL getTalent("세로애널")
+	elseif TALENT:MASTER:허벌보지
+		printFormW 시간이 지난 덕에 %CALLNAME:MASTER%의 %kr(partStr(121), "은", "는")% 조금 아물은 것 같다.
+		CALL loseTalent("세로애널")
+	endif
+	
+	if EXP:MASTER:자궁구개발경험 > 30
+		printFormL 집요하게 공략된 끝에 %CALLNAME:MASTER%의 %partStr(116)% 입구는 완전히 풀어져 벌름거리고 있다
+		CALL getTalent("자궁벌어짐")
+	endif
+
+	for partIdx, 101, 200
+		; 부위별 절정경험으로 약점 생성
+		if EXP:MASTER:partIdx > 500 && !TALENT:MASTER:partIdx
+			printFormW 끊임없이 노려진 나머지 %CALLNAME:MASTER%의 %kr(partStrRaw(partIdx), "은", "는")% 어느새 약점으로 개발되어버렸다
+			CALL getTalent(TALENTNAME:partIdx)
+		endif
+	next
+	
+	if TALENT:MASTER:겁쟁이 && CFLAG:MASTER:전투결과 > 5
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 충분히 많은 전투를 겪어 더 이상 두려움을 겪지 않게 되었다
+		CALL loseTalent("겁쟁이")
+		CFLAG:MASTER:전투결과 = 0
+
+	elseif !TALENT:MASTER:대범함 && !TALENT:MASTER:겁쟁이 && CFLAG:MASTER:전투결과 > 5
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 풍부한 승리의 경험으로 용기를 얻었다
+		CALL getTalent("대범함")
+		CFLAG:MASTER:전투결과 = 0
+
+	elseif TALENT:MASTER:대범함 && CFLAG:MASTER:전투결과 < -5
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 이어진 패배로 용기를 잃었다
+		CALL loseTalent("대범함")
+		CFLAG:MASTER:전투결과 = 0
+
+	elseif !TALENT:MASTER:겁쟁이 && !TALENT:MASTER:대범함 && CFLAG:MASTER:전투결과 < -5
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 습관적인 패배로 완전히 겁을 먹어버렸다
+		CALL getTalent("겁쟁이")
+		CFLAG:MASTER:전투결과 = 0
+	endif
+
+	; 가슴크기
+	if BASE:MASTER:가슴크기 > 175 && BASE:MASTER:가슴둘레 > 800
+		if !TALENT:MASTER:폭유
+			printFormW %kr(CALLNAME:MASTER, "은", "는")% 최근 가슴이 멈추질 않고 성장하고 있다
+			
+			if TALENT:MASTER:거유
+				CALL loseTalent("거유")
+			elseif TALENT:MASTER:빈유
+				CALL loseTalent("빈유")
+			elseif TALENT:MASTER:빨래판
+				CALL loseTalent("빨래판")
+			endif
+			CALL getTalent("폭유")
+		endif
+	elseif BASE:MASTER:가슴크기 > 150 && BASE:MASTER:가슴둘레 > 750
+		if !TALENT:MASTER:거유
+			printFormW %kr(CALLNAME:MASTER, "은", "는")% 최근 가슴이 성장하고 있다
+			
+			if TALENT:MASTER:폭유
+				CALL loseTalent("폭유")
+			elseif TALENT:MASTER:빈유
+				CALL loseTalent("빈유")
+			elseif TALENT:MASTER:빨래판
+				CALL loseTalent("빨래판")
+			endif
+			CALL getTalent("거유")
+		endif
+	elseif BASE:MASTER:가슴크기 < 100 && BASE:MASTER:가슴둘레 < 650
+		if !TALENT:MASTER:빈유
+			printFormW %kr(CALLNAME:MASTER, "은", "는")% 최근 가슴 크기가 줄어드는 것을 느끼고 있다
+			
+			if TALENT:MASTER:폭유
+				CALL loseTalent("폭유")
+			elseif TALENT:MASTER:거유
+				CALL loseTalent("거유")
+			elseif TALENT:MASTER:빨래판
+				CALL loseTalent("빨래판")
+			endif
+			CALL getTalent("빈유")
+		endif
+	elseif BASE:MASTER:가슴크기 < 75 && BASE:MASTER:가슴둘레 < 650
+		if !TALENT:MASTER:빨래판
+			printFormW 요즘들어 %kr(CALLNAME:MASTER, "은", "는")% 가슴이 안쓰러울 정도로 쪼그라들어 있다
+			
+			if TALENT:MASTER:폭유
+				CALL loseTalent("폭유")
+			elseif TALENT:MASTER:거유
+				CALL loseTalent("거유")
+			elseif TALENT:MASTER:빈유
+				CALL loseTalent("빈유")
+			endif
+			CALL getTalent("빨래판")
+		endif
+	else
+		if TALENT:MASTER:폭유 || TALENT:MASTER:거유 || TALENT:MASTER:빈유 || TALENT:MASTER:빨래판
+			printFormW 어느새 %CALLNAME:MASTER%의 가슴은 평범한 크기가 되어 있었다
+		endif
+
+		if TALENT:MASTER:폭유
+			CALL loseTalent("폭유")
+		elseif TALENT:MASTER:거유
+			CALL loseTalent("거유")
+		elseif TALENT:MASTER:빈유
+			CALL loseTalent("빈유")
+		elseif TALENT:MASTER:빨래판
+			CALL loseTalent("빨래판")
+		endif
+	endif
+
+	; 체중
+	if (100 * BASE:MASTER:허리둘레 / BASE:MASTER:엉덩이둘레) > 85
+		printFormW 요즘들어 %kr(CALLNAME:MASTER, "은", "는")% 살이 많이 찐 모양이다
+		
+		if TALENT:MASTER:저체중
+			CALL loseTalent("저체중")
+		endif
+		CALL getTalent("과체중")
+
+	elseif (100 * BASE:MASTER:허리둘레 / BASE:MASTER:엉덩이둘레) < 75
+		printFormW 요즘들어 %kr(CALLNAME:MASTER, "은", "는")% 살이 많이 빠져 여윈 모양이다
+		
+		if TALENT:MASTER:과체중
+			CALL loseTalent("과체중")
+		endif
+		CALL getTalent("저체중")
+		
+	else
+		if TALENT:MASTER:과체중 || TALENT:MASTER:저체중
+			printFormW 요즘들어 %kr(CALLNAME:MASTER, "은", "는")% 딱 보기 좋은 몸매가 되었다
+		endif
+		
+		if TALENT:MASTER:과체중
+			CALL loseTalent("과체중")
+		elseif TALENT:MASTER:저체중
+			CALL getTalent("저체중")
+		endif
+	endif

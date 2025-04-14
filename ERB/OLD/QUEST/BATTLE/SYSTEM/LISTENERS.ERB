@@ -1,0 +1,9 @@
+﻿@onBattleTurnEnd
+
+	CALL checkBuffs
+	CALL checkOrgasm
+	CALL checkCum
+	
+	if !shouldMasterDown()
+		MAXBASE:MASTER:영양상태++
+	endif

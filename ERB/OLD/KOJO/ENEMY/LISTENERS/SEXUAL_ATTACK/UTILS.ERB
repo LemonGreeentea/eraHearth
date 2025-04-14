@@ -1,0 +1,108 @@
+﻿@isOrdinaryPart(partIdx)
+#function
+#dim dynamic partIdx
+
+	returnf partIdx == 102 || partIdx == 112 || partIdx == 113 || partIdx == 121 || partIdx == 122 || partIdx == 123
+
+@isHole(partIdx)
+#function
+#dim dynamic partIdx
+
+	returnf partIdx == 101 || partIdx == 102 || partIdx == 115 || partIdx == 116 || partIdx == 121 || partIdx == 123 || partIdx == 124 || partIdx == 125
+
+@isAttackableBodyPart(partIdx)
+#function
+#dim dynamic partIdx
+
+	if strlens(BASENAME:partIdx) == 0
+		returnf 0
+	endif
+	
+	if CFLAG:(200 + partIdx) == 2 && !CFLAG:TARGET:성기구사용
+		returnf 0
+	elseif CFLAG:(200 + partIdx) > 2
+		returnf 0
+	endif
+
+	; 요도->방광 순
+	if partIdx == 124 && !isMasterInserted(125, 1)
+		returnf 0
+	endif
+	; 자궁->난소 순
+	if partIdx == 115 && !isMasterInserted(116, 1)
+		returnf 0
+	endif
+	; 질->자궁 순
+	if partIdx == 116 && !isMasterInserted(121, 1)
+		returnf 0
+	endif
+	
+	; 상의를 입고 있는 경우
+	if partIdx == 113 && (EQUIP:MASTER:상의 != 0 || EQUIP:MASTER:속옷 != 0)
+		returnf 0
+	endif
+
+	; 하의를 입고 있는 경우
+	if partIdx == 121 && (EQUIP:MASTER:하의 != 0 || EQUIP:MASTER:속옷 != 0)
+		returnf 0
+	endif
+	if partIdx == 123 && (EQUIP:MASTER:하의 != 0 || EQUIP:MASTER:속옷 != 0)
+		returnf 0
+	endif
+	if partIdx == 125 && (EQUIP:MASTER:하의 != 0 || EQUIP:MASTER:속옷 != 0)
+		returnf 0
+	endif
+
+	returnf 1
+
+@getSexualAtkBodyPart
+#function
+#dim dynamic partIdx
+
+	; 높은 확률로 이전 턴 부위를 따라감
+	if TCVAR:TARGET:성희롱부위 && isAttackableBodyPart(TCVAR:TARGET:성희롱부위)
+		if RAND:3 < 2
+			returnf TCVAR:TARGET:성희롱부위
+		endif
+	endif
+
+	; 구멍을 노리고 있고 이미 어느 정도 진행됐으면 계속
+	if isMasterInserted(TCVAR:TARGET:성희롱부위, 1) && PALAM:TARGET:사정 > 2000	
+		returnf TCVAR:TARGET:성희롱부위
+	endif
+
+	for partIdx, 101, 200
+		if isAttackableBodyPart(partIdx)
+			CALLf pushShuffle(partIdx, 1)
+		endif
+	next
+
+	returnf popShuffle()
+
+@getOrdinarySexualAtkBodyPart
+#function
+#dim dynamic partIdx
+
+	; 높은 확률로 이전 턴 부위를 따라감
+	if TCVAR:TARGET:성희롱부위 && isAttackableBodyPart(TCVAR:TARGET:성희롱부위)
+		if RAND:3 < 2
+			returnf TCVAR:TARGET:성희롱부위
+		endif
+	endif
+
+	; 구멍을 노리고 있고 이미 어느 정도 진행됐으면 계속
+	if isMasterInserted(TCVAR:TARGET:성희롱부위, 1) && PALAM:TARGET:사정 > 2000	
+		returnf TCVAR:TARGET:성희롱부위
+	endif
+
+	for partIdx, 101, 200
+		if !isOrdinaryPart(partIdx)
+			continue
+		endif
+
+		if isAttackableBodyPart(partIdx)
+			CALLf pushShuffle(partIdx, 1)
+		endif
+	next
+
+	returnf popShuffle()

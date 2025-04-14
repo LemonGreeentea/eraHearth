@@ -1,0 +1,22 @@
+﻿; 보통속옷
+; 옵션 없음
+; @itemOption1501()
+
+@itemExpl1501()
+	RESULTS '= "평범한 속옷이다."
+
+@isUsable1501(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1501(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1501
+	return 1
+@isUnequipable1501
+	return 1
+
+@onEquip1501
+
+@onUnequip1501

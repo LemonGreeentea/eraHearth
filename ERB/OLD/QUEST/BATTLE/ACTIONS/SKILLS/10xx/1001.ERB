@@ -1,0 +1,18 @@
+﻿@COM_ABLE1001
+
+	; 나무지팡이 장착시 사용가능
+	return !isMasterDown() && isSkillAvailable(1001, "무기", 1605) && !hasBuff(MASTER, "침묵")
+
+@COM1001
+
+	PRINTL 마법 화살을 발사했다!
+	
+	if BASE:MASTER:마력 < 40
+		PRINTL 하지만 마력이 부족하여 실패했다...
+		return 0
+	endif
+	BASE:MASTER:마력 -= 40
+	
+	LOSEBASE:체력 = randomizeDamage(20 * MAX(1, getActualMatk(MASTER) - getActualMdef(TARGET)))
+
+	return 1

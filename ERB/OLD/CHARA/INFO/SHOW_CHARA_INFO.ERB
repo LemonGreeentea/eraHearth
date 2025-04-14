@@ -1,0 +1,70 @@
+﻿; 어차피 주인공 이외의 대상에 대해 콜하지는 않긴 한데 이런저런 래퍼가 필요하긴 함
+@showMasterInfo
+#dim page
+
+$charaInfoLoop
+
+	page = LIMIT(page, 0, 6)
+
+	clearLine 99999
+	printForm 이름 : %NAME:MASTER%
+
+	if TALENT:MASTER:남성 == 1
+		CALL colorPrint(0x00ff00, "♂")
+	else
+		CALL colorPrint(0xff0000, "♀")
+	endif
+	PRINTL
+
+	barstr BASE:MASTER:체력, MAXBASE:MASTER:체력, 10
+	printFormL 체력 : %RESULTS% ({BASE:MASTER:체력}/{MAXBASE:MASTER:체력})
+
+	barstr BASE:MASTER:마력, MAXBASE:MASTER:마력, 10
+	printFormL 마력 : %RESULTS% ({BASE:MASTER:마력}/{MAXBASE:MASTER:마력})
+
+	PRINTL ‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥
+
+	if page == 0
+		CALL showDiary
+	elseif page == 1
+		CALL showTalents
+		CALL showMarks
+		CALL showAbilities
+	elseif page == 2
+		CALL showExperiences
+		CALL showFameInfo
+	elseif page == 3
+		CALL showMentalInfo
+		CALL showHypnosisInfo
+		CALL showFavorites
+	elseif page == 4
+		CALL showBasicBodyInfo
+	elseif page == 5
+		CALL showDetailedBodyInfoGenital
+	elseif page == 6
+		CALL showDetailedBodyInfoMisc
+	endif
+
+	PRINTL ‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥
+	
+	printFormLC [901] - 이전 페이지로
+	printFormL [902] - 다음 페이지로
+	printFormLC [910] - 이름 변경
+	printFormL [911] - 신체 부위명 설정
+	PRINTL [900] - 돌아가기
+	
+	input
+	
+	if RESULT == 901
+		page--
+	elseif RESULT == 902
+		page++
+	elseif RESULT == 910
+		CALL customizeName
+	elseif RESULT == 911
+		CALL customizeBodyParts
+	elseif RESULT == 900
+		return 1
+	endif
+
+	goto charaInfoLoop

@@ -1,0 +1,40 @@
+﻿@checkTight(vaginaOrAnal, penisSize)
+#dim dynamic vaginaOrAnal
+#dim dynamic penisSize
+#dim dynamic partIdx
+#dim dynamic expansionBaseIdx
+#dim dynamic expansionExpIdx
+
+	if !CFLAG:MASTER:의식있음
+		setBit CFLAG:MASTER:무의식중사건, 2
+	endif
+
+	if vaginaOrAnal == 1
+		partIdx = getNum(BASE, "질상태")
+		expansionBaseIdx = getNum(BASE, "보지조임")
+		expansionExpIdx = getNum(EXP, "V확장경험")
+	elseif vaginaOrAnal == 2
+		partIdx = getNum(BASE, "애널상태")
+		expansionBaseIdx = getNum(BASE, "애널조임")
+		expansionExpIdx = getNum(EXP, "A확장경험")
+	else
+		return
+	endif
+
+	if BASE:MASTER:expansionBaseIdx + penisSize > MAXBASE:MASTER:expansionBaseIdx
+		CALL onMasterExpansion_m(expansionBaseIdx)
+		CALL onMasterExpansion_e(expansionBaseIdx)
+	endif
+	
+	if BASE:MASTER:expansionBaseIdx + penisSize > MAXBASE:MASTER:expansionBaseIdx + 10
+		BASE:MASTER:partIdx -= 3
+		BASE:MASTER:expansionBaseIdx -= 2 + RAND:2
+		EXP:MASTER:expansionExpIdx++
+		
+		printFormW %CALLNAME:MASTER%의 %kr(partStr(partIdx), "이", "가")% 늘어나다 못해 일부 찢어진 것 같다
+	elseif BASE:MASTER:expansionBaseIdx + penisSize> MAXBASE:MASTER:expansionBaseIdx + 5
+		BASE:MASTER:expansionBaseIdx -= 1
+		EXP:MASTER:expansionExpIdx++
+		
+		printFormW %CALLNAME:MASTER%의 %kr(partStr(partIdx), "이", "가")% 무리한 삽입으로 늘어나고 있다...
+	endif

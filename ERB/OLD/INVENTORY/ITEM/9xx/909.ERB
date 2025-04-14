@@ -1,0 +1,32 @@
+﻿; 배란유도제
+@itemOption909()
+	RESULTS '= "[임신확률상승]"
+
+@itemExpl909()
+	RESULTS '= "사용시 생리 주기가 변화하여 임신 확률을 큰 폭으로 상승시킨다."
+
+@isUsable909(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER
+
+@onUseItem909(targetIdx)
+#dim dynamic targetIdx
+
+
+	EXP:targetIdx:약물경험++
+	BASE:targetIdx:생리주기 = MAXBASE:MASTER:생리주기 / 2
+	TALENT:targetIdx:생리중 = 0
+	TALENT:targetIdx:가임기 = 1
+
+	printFormW %kr(NAME:targetIdx, "은", "는")% 약물의 효과로 강제로 배란했다.
+	
+	return 1
+
+@isEquipable909
+	return 0
+@isUnequipable909
+	return 0
+
+@onEquip909
+@onUnequip909

@@ -1,0 +1,26 @@
+﻿; 약초
+@itemOption1()
+	RESULTS '= "[체력회복+50]"
+
+@itemExpl1()
+	RESULTS '= "쓴 맛이 나는 약초.\n입에 쓴 것이 몸에는 좋은 법이다."
+
+@isUsable1(targetIdx)
+#dim dynamic targetIdx
+
+	return 1
+
+@onUseItem1(targetIdx)
+#dim dynamic targetIdx
+
+	BASE:targetIdx:체력 = LIMIT(BASE:targetIdx:체력 + 50, 0, MAXBASE:targetIdx:체력)
+
+	return 1
+
+@isEquipable1
+	return 0
+@isUnequipable1
+	return 0
+
+@onEquip1
+@onUnequip1

@@ -1,0 +1,18 @@
+﻿@hasQuest
+#function
+	returnf hasHuntQuest() || hasDeliverQuest()
+
+@hasHuntQuest
+#function
+
+	returnf CFLAG:1:종족 != 0
+
+@hasDeliverQuest
+#function
+
+	returnf FLAG:퀘스트진행중 && FLAG:퀘스트종류 == 1
+
+@hasDeliveryItems
+#function
+
+	returnf ITEM:(FLAG:퀘스트대상) >= FLAG:퀘스트값

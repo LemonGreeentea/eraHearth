@@ -1,0 +1,111 @@
+﻿@changeMasterEquips(equipSlotIdx, equipItemIdx)
+#dim dynamic equipSlotIdx
+#dim dynamic equipItemIdx
+#dim dynamic onepieceIdx
+
+	if equipSlotIdx < 11 || 19 < equipSlotIdx
+		CALL systemError("잘못된 장비 위치입니다")
+		return 0
+	endif
+
+	if ITEM:equipItemIdx == 0
+		CALL systemError("해당 장비 아이템을 소지하고 있지 않습니다")
+		return 0
+	endif
+	
+	
+	if EQUIP:MASTER:equipSlotIdx
+		trycCALLform isUnequipable{equipItemIdx}
+			if RESULT
+				CALLForm onUnequip{EQUIP:MASTER:equipSlotIdx}
+			else
+				CALL systemError("해당 위치에 장착된 아이템을 해제할 수 없습니다")
+				return 0
+			endif
+		catch
+			CALL systemError("해당 위치에 장착된 아이템을 해제할 수 없습니다")
+			return 0
+		endcatch
+	endif
+	EQUIP:MASTER:equipSlotIdx = 0
+	
+	trycCALLform isEquipable{equipItemIdx}
+		if RESULT
+			EQUIP:MASTER:equipSlotIdx = equipItemIdx
+		else
+			CALL systemError("해당 아이템을 장비할 수 없습니다")
+			return 0
+		endif
+	catch
+		CALL systemError("해당 아이템을 장비할 수 없습니다")
+		return 0
+	endcatch
+
+	trycCALLform isOnePiece{equipItemIdx}
+		; 한벌옷일 경우 반대쪽도 처리
+		onepieceIdx = RESULT
+		
+		; 반대쪽 옷을 벗길 수 있는지 확인
+		CALLForm isUnequipable{EQUIP:MASTER:(onepieceIdx / 100)}
+		if !RESULT
+			CALL systemError("한벌옷의 반대편 위치에 장착된 아이템을 해제할 수 없습니다")
+		endif
+		
+		CALLForm isEquipable{onepieceIdx}
+		if !RESULT
+			CALL systemError("한벌옷의 반대편 옷을 장착할 수 없습니다")
+		endif
+
+		; 반대쪽 옷 먼저 해제 후 장착
+		CALLForm onUnequip{EQUIP:MASTER:(onepieceIdx / 100)}
+		EQUIP:MASTER:(onepieceIdx / 100) = 0
+
+		CALLForm onEquip{onepieceIdx}
+		EQUIP:MASTER:(onepieceIdx / 100) = onepieceIdx
+
+		CALL systemNotify(@"%EQUIPNAME:(onepieceIdx / 100)% 장비를 %kr(ITEMNAME:(onepieceIdx / 100), "으로", "로")% 교체했습니다")
+	catch
+	endcatch
+
+	CALLForm onEquip{EQUIP:MASTER:equipSlotIdx}
+
+	CALL systemNotify(@"%EQUIPNAME:equipSlotIdx% 장비를 %kr(ITEMNAME:equipItemIdx, "으로", "로")% 교체했습니다")
+	
+	return 1
+
+@unequipMasterEquips(equipSlotIdx)
+#dim dynamic equipSlotIdx
+
+	trycCALLform isUnequipable{EQUIP:MASTER:equipSlotIdx}
+		if RESULT
+			CALLForm onUnequip{EQUIP:MASTER:equipSlotIdx}
+		else
+			CALL systemError("해당 위치에 장착된 아이템을 해제할 수 없습니다")
+			return 0
+		endif
+	catch
+		CALL systemError("해당 위치에 장착된 아이템을 해제할 수 없습니다")
+		return 0
+	endcatch
+
+	EQUIP:MASTER:equipSlotIdx = 0
+	CALL systemNotify(@"%EQUIPNAME:equipSlotIdx% 장비를 해제했습니다")
+	
+	return 1
+
+@unequipMasterEquipsSilently(equipSlotIdx)
+#dim dynamic equipSlotIdx
+
+	trycCALLform isUnequipable{EQUIP:MASTER:equipSlotIdx}
+		if RESULT
+			CALLForm onUnequip{EQUIP:MASTER:equipSlotIdx}
+		else
+			return 0
+		endif
+	catch
+		return 0
+	endcatch
+
+	EQUIP:MASTER:equipSlotIdx = 0
+	
+	return 1

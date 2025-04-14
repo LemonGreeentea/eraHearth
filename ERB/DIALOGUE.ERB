@@ -1,0 +1,29 @@
+﻿;=====================================
+; 대화문을 설정하는 함수
+;
+;=====================================
+
+@TALK_CHARA(chara, 대화, WL)
+#DIMS 대화
+#DIM chara
+#DIM WL
+
+SETCOLOR CHARA_COLOR(chara)
+IF WL == 1
+    PRINTFORML 「%대화%」
+ELSE
+    PRINTFORMW 「%대화%」
+ENDIF
+RESETCOLOR 
+
+@CHARA_COLOR(AR)
+#DIM AR
+#DIM LOC
+#FUNCTION
+SELECTCASE AR
+    ;튜토슈로
+    CASE 1
+        LOC = 0Xd14d7c
+ENDSELECT
+
+RETURNF LOC

@@ -1,0 +1,33 @@
+﻿; 사후피임약
+@itemOption903()
+	RESULTS '= "[임신확률대폭감소][부작용:생리불순]"
+
+@itemExpl903()
+	RESULTS '= "사용시 임신 확률을 대폭 낮추지만, 이미 수정된 상태에서는 효과가 없다. 또한, 짧은 시간 내에 연속해서 사용하면 부작용이 발생할 수 있다."
+
+@isUsable903(targetIdx)
+#dim dynamic targetIdx
+
+	return targetIdx == MASTER && !FLAG:자궁대여료
+
+@onUseItem903(targetIdx)
+#dim dynamic targetIdx
+
+	; 7일이내 2회이상 사용시 10% 확률로 생리불순
+	if RAND:10 == 0 && (DAY < CFLAG:targetIdx:사후피임약복용 + 7)
+		printFormW %kr(NAME:targetIdx, "은", "는")% 잦은 사후피임약 복용으로 생리불순이 된 모양이다...
+		TALENT:targetIdx:생리불순 = 1
+	endif
+	
+	EXP:targetIdx:약물경험++
+	CFLAG:targetIdx:사후피임약복용 = DAY
+	
+	return 1
+
+@isEquipable903
+	return 0
+@isUnequipable903
+	return 0
+
+@onEquip903
+@onUnequip903

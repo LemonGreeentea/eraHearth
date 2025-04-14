@@ -1,0 +1,92 @@
+﻿@checkOrgasm
+#dim dynamic partIdx
+#dim dynamic orgasmThres
+#dim dynamic orgasmCount
+#dim dynamic orgasmParts, 100
+#dim dynamic insuffOrgasm
+
+	if !CFLAG:MASTER:의식있음
+		setBit CFLAG:MASTER:무의식중사건, 1
+		return
+	endif
+
+	orgasmThres = masterOrgasmThres()
+	for partIdx, 101, 200
+		if PALAM:MASTER:partIdx >= orgasmThres
+			orgasmParts:(orgasmCount++) = partIdx
+			printFormL %partStrRaw(partIdx)% 절정
+			DOWN:partIdx = PALAM:MASTER:partIdx - PALAM:MASTER:partIdx % orgasmThres
+			GOTJUEL:partIdx += 10
+			UP:만족 += 100
+			TIMES GOTJUEL:partIdx, 1.8
+
+			; 욕정 증가
+			; 약절정
+			if PALAM:MASTER:partIdx / orgasmThres == 1
+				TIMES UP:욕정, 1.25
+			; 2배절정
+			elseif PALAM:MASTER:partIdx / orgasmThres == 2
+				TIMES UP:욕정, 1.5
+				TIMES UP:만족, 1.25
+			; 3배절정
+			elseif PALAM:MASTER:partIdx / orgasmThres == 3
+				TIMES UP:욕정, 2
+				TIMES UP:만족, 1.5
+			; 그외
+			elseif PALAM:MASTER:partIdx / orgasmThres > 3
+				TIMES UP:욕정, 3
+				TIMES UP:만족, 2
+			endif
+
+			; 절정경험 증가
+			EXP:MASTER:절정경험 += PALAM:MASTER:partIdx / orgasmThres
+			if BASE:MASTER:혈중미약농도 > 100
+				EXP:MASTER:미약절정경험 += CFLAG:MASTER:partIdx / orgasmThres
+			endif
+			EXP:MASTER:(partIdx + 100) += PALAM:MASTER:partIdx / orgasmThres
+
+		elseif PALAM:MASTER:partIdx >= orgasmThres / (1 + MARK:MASTER:절정봉인)
+			; 절정봉인 적용중
+			insuffOrgasm++
+			UP:굴복 += PALAM:MASTER:partIdx / 100
+			UP:욕정 *= 2 * orgasmThres / PALAM:MASTER:partIdx
+		endif
+	next
+
+	if orgasmCount
+		if FLAG:전투중
+			if FLAG:복종의계약
+				CALL applyBuffTo(MASTER, "복종", FLAG:복종의계약)
+			endif
+		endif
+
+		if ABL:TARGET:흡정
+			printFormL %kr(CALLNAME:MASTER, "은", "는")% %NAME:TARGET%에게 착정당하고 있다
+
+			; 최대 마력의 5%를 강탈 / 최대 15%
+			if BASE:MASTER:마력 >= MIN(orgasmCount, 3) * MAXBASE:MASTER:마력 / 20
+				BASE:MASTER:마력 -= MIN(orgasmCount, 3) * MAXBASE:MASTER:마력 / 20
+			; 무족하면 패널티
+			; 최대 체력의 2% / 최대 6%
+			else
+				printFormL 하지만 %CALLNAME:MASTER%의 마력은 이미 바닥이었고, 대신해서 체력을 흡수당했다
+
+				BASE:MASTER:마력 = 0
+				BASE:MASTER:체력 -= MIN(orgasmCount, 3) * MAXBASE:MASTER:체력 / 50
+			endif
+		endif
+		
+		if (PALAM:MASTER:가슴쾌감 >= orgasmThres || PALAM:MASTER:유두쾌감 >= orgasmThres) || (FLAG:원정중 && FLAG:풍요의계약)
+			CALL lactate(50 * ( (PALAM:MASTER:가슴쾌감 / orgasmThres) + (PALAM:MASTER:유두쾌감 / orgasmThres) ))
+		endif
+
+		BASE:MASTER:체력 = MAX(BASE:MASTER:체력 - MAXBASE:MASTER:체력 / 20, 0)
+
+		; todo 절정구상
+		CALL onMasterOrgasm_m(orgasmParts, orgasmCount)
+		CALL onMasterOrgasm_e(orgasmParts, orgasmCount)
+	elseif insuffOrgasm
+		printFormL %kr(CALLNAME:MASTER, "은", "는")% 절정을 봉인당한 상태다
+		CALL onMasterInsuffOrgasm_m
+		CALL onMasterInsuffOrgasm_e
+	endif

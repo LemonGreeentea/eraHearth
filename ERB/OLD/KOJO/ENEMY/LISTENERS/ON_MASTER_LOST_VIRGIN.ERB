@@ -1,0 +1,9 @@
+﻿@onMasterLostVirgin_e(partIdx)
+#dim dynamic partIdx
+
+	trycCALLform c{CFLAG:TARGET:캐릭터번호}onMasterLostVirgin(partIdx)
+		;
+	catch
+		CALL fallbackOnMasterLostVirgin_e(partIdx)
+	endcatch
+

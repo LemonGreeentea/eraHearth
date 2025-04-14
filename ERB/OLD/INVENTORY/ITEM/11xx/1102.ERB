@@ -1,0 +1,25 @@
+﻿; 마녀의고깔모자
+@itemOption1102()
+	RESULTS '= "[방어력+1][마법내성+1]"
+@itemExpl1102()
+	RESULTS '= "마녀 하면 흔히 떠오르는 모습의 고깔모자다."
+
+@isUsable1102(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1102(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1102
+	return 1
+@isUnequipable1102
+	return 1
+
+@onEquip1102
+	ABL:MASTER:마법내성++
+	ABL:MASTER:방어력++
+
+@onUnequip1102
+	ABL:MASTER:마법내성--
+	ABL:MASTER:방어력--

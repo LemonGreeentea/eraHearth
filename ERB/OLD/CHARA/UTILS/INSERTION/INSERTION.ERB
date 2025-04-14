@@ -1,0 +1,56 @@
+﻿@insertIntoMaster(partIdx, insertType)
+#dim dynamic partIdx
+#dim dynamic insertType
+
+	if !CFLAG:MASTER:의식있음
+		setBit CFLAG:MASTER:무의식중사건, 3
+	endif
+
+	setBit CFLAG:MASTER:(200 + partIdx), insertType
+	
+	EXP:MASTER:partIdx++
+	EXP:MASTER:삽입경험++
+	; 종족별성경험추가
+	EXP:MASTER:(60 + CFLAG:TARGET:종족)++
+
+	; 사람 또는 모브급 이상의 NPC일 경우에만 카운팅
+	if !CFLAG:TARGET:경험완료 && ( CFLAG:TARGET:캐릭터번호 >= 1000 || CFLAG:TARGET:종족 == 1 )
+		CFLAG:TARGET:경험완료 = 1
+		EXP:MASTER:경험인원수++
+	endif
+
+	CALL checkStd
+	CALL checkVirgin
+	CALL checkVirginParasite
+	CALL increaseArousal(partIdx, 100)
+	
+	CALL onMasterInserted_m(partIdx, insertType)
+	CALL onMasterInserted_e(partIdx, insertType)
+
+	; 보지조임체크
+	if isMasterInserted(121, 1)
+		CALL checkTight(1, BASE:TARGET:자지크기)
+	endif
+	; 애널조임체크
+	if isMasterInserted(123, 1)
+		CALL checkTight(2, BASE:TARGET:자지크기)
+	endif
+
+@outFromMaster(partIdx, insertType)
+#dim dynamic partIdx
+#dim dynamic insertType
+
+	clearBit CFLAG:MASTER:(200 + partIdx), insertType
+
+@isMasterInserted(partIdx, insertType)
+#function
+#dim dynamic partIdx
+#dim dynamic insertType
+
+	returnf getBit(CFLAG:MASTER:(200 + partIdx), insertType)
+
+@isInsertablePart(partIdx)
+#function
+#dim dynamic partIdx
+
+	returnf partIdx == 101 || partIdx == 102 || partIdx == 115 || partIdx == 116 || partIdx == 121 || partIdx == 123 || partIdx == 124 || partIdx == 125

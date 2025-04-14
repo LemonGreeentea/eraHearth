@@ -1,0 +1,17 @@
+﻿; 기본적으로는 @USERSHOP 종료 후에 호출
+; 하지만 전투시 train 종료 후에도 호출됨
+@afterAction
+
+	; 기본적으로 비자발
+	; 일부 자발적인 케이스에서만 꺼 줄것
+	FLAG:비자발임신 = 1
+
+	CALL clearFlags
+	CALL calcPalam
+	CALL applyUpDown
+
+	CALL sexualHarassment
+	CALL cumDump
+	CALL arrest
+	CALL hypnoEvent
+	CALL checkOrgasm

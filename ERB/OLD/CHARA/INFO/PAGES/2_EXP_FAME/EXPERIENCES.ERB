@@ -1,0 +1,18 @@
+﻿@showExperiences
+#dim dynamic expIdx
+#dim dynamic expCount
+
+	PRINTL 경험 목록
+
+	for expIdx, 1, 1000
+		if !EXP:MASTER:expIdx
+			continue
+		endif
+
+		expCount++
+		printForm %EXPNAME:expIdx, 20% - {EXP:MASTER:expIdx, 5}
+		if expCount % 4 == 0
+			PRINTL
+		endif
+	next
+	PRINTL

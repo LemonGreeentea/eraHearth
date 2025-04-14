@@ -1,0 +1,195 @@
+﻿
+; 유의사항
+; TALENT:임신 은 유저에게 표시해 주기 위한 용도로만 사용
+; 실제 계산에서는 BASE:임신일수 를 활용할것
+; 실제로 임신한 지 모르다 뒤늦게 알아차리게 되는 전개가 마음에 들었기 떄문
+
+@mensAndPreg
+#dim dynamic pregType
+#dim dynamic pregSemen
+
+	; 생리주기 계산
+	MAXBASE:MASTER:생리주기 = LIMIT(MAXBASE:MASTER:생리주기, 8, 35)
+	; 임신중이 아닐경우 생리주기 카운터 증가
+	if !BASE:MASTER:임신일수
+		BASE:MASTER:생리주기 = (BASE:MASTER:생리주기 + 1) % MAXBASE:MASTER:생리주기
+	endif
+	
+	; 반대로, 임신시 일수 증가
+	if BASE:MASTER:임신일수
+		BASE:MASTER:임신일수++
+	endif
+	
+	if !RAND:2 && TALENT:MASTER:생리불순
+		BASE:MASTER:생리주기 = (BASE:MASTER:생리주기 - 1 + MAXBASE:MASTER:생리주기) % MAXBASE:MASTER:생리주기
+	endif
+	
+	if BASE:MASTER:생리주기 == 0
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 아랫배에 위화감을 느꼈다...
+		printFormW 아무래도 생리가 시작된 모양이다
+		TALENT:MASTER:생리중 = 1
+	elseif TALENT:MASTER:생리중 && ((BASE:MASTER:생리주기 == MAXBASE:MASTER:생리주기 / 4 - 1) || (BASE:MASTER:생리주기 < MAXBASE:MASTER:생리주기 / 4 - 1 && RAND:6 == 0))
+		printFormW %kr(CALLNAME:MASTER, "은", "는")% 훨씬 상쾌한 기분이다
+		printFormW %CALLNAME:MASTER%의 생리가 끝났다
+		TALENT:MASTER:생리중 = 0
+	endif
+
+	if !(BASE:MASTER:임신일수 || TALENT:MASTER:생리중) && (MAXBASE:MASTER:생리주기 / 2 - 4) <= BASE:MASTER:생리주기 && BASE:MASTER:생리주기 <= (MAXBASE:MASTER:생리주기 / 2 + 1)
+		TALENT:MASTER:가임기 = 1
+	else
+		TALENT:MASTER:가임기 = 0
+	endif
+	
+	; 임신판정
+	if !BASE:MASTER:임신일수 && (TALENT:MASTER:가임기 || FLAG:자궁대여료)
+		; 자궁이 가득차있을 경우 100% 기준으로 난수 돌려서 임신판정
+		if FLAG:자궁대여료 || (RAND:100 < 100 * semenAmount(0) / (BASE:MASTER:자궁크기 * 15 / 8))
+			; 임신처리
+			BASE:MASTER:임신일수 = 1
+			pregSemen = getLogPos(RAND:semenAmount(0))
+
+			CFLAG:MASTER:아이종족 = getSemenRace(pregSemen)
+			CFLAG:MASTER:비자발임신 = isSexUnwanted(pregSemen)
+			CFLAG:MASTER:아이아버지 = getSemenOwner(pregSemen)
+			CSTR:MASTER:아이아버지이름 = %SexLogName:pregSemen%
+			CFLAG:MASTER:아버지유전자 = getSemenGene(pregSemen)
+			
+			if CFLAG:MASTER:아이종족 == 1
+				BASE:MASTER:자궁침식도 -= 1 + RAND:4
+			else
+				BASE:MASTER:자궁침식도 += 1 + RAND:4
+
+				; 마족일 경우 침식도 추가 상승
+				if CFLAG:MASTER:아이종족 == 5
+					BASE:MASTER:자궁침식도 += 1 + RAND:2
+				endif
+			endif
+
+			BASE:MASTER:자궁침식도 = LIMIT(BASE:MASTER:자궁침식도, 0, MAXBASE:MASTER:자궁침식도)
+		endif
+	endif
+	
+	if BASE:MASTER:임신일수 < 3
+		; 원래는 좀 더 명확하게 계속 추적해야되는데 일단은 이렇게 계산하기로 함
+		CFLAG:MASTER:잠재적아버지 = MAX(CFLAG:MASTER:잠재적아버지, semenCount())
+	endif
+	
+	; 사후피임약 복용시 24-72시간 이내일 경우 95% / 80% / 50% 확률로 피임
+	; talent 있을경우 이미 확정되었으므로 돌이킬 수 없음
+	if RAND:20 < 19 && CFLAG:MASTER:사후피임약복용 && (DAY == CFLAG:MASTER:사후피임약복용 + 1) && !TALENT:MASTER:임신
+		BASE:MASTER:임신일수 = 0
+	elseif RAND:5 < 4 && CFLAG:MASTER:사후피임약복용 && (DAY == CFLAG:MASTER:사후피임약복용 + 2) && !TALENT:MASTER:임신
+		BASE:MASTER:임신일수 = 0
+	elseif RAND:2 == 0 && CFLAG:MASTER:사후피임약복용 && (DAY == CFLAG:MASTER:사후피임약복용 + 3) && !TALENT:MASTER:임신
+		BASE:MASTER:임신일수 = 0
+	endif
+	
+	; 정액 하루씩 묵히기
+	CALL diminishSemen
+	
+	; 몬스터 혹은 벌레 정액이 인간 정액보다 많을 경우 침식도 증가
+	if semenAmount(0) > semenAmount(1) * 2
+		BASE:MASTER:자궁침식도 += 1 + RAND:2
+	; 반대면 감소
+	elseif semenAmount(1) * 2 > semenAmount(0)
+		BASE:MASTER:자궁침식도 -= 1 + RAND:2
+	endif
+	BASE:MASTER:자궁침식도 = LIMIT(BASE:MASTER:자궁침식도, 0, MAXBASE:MASTER:자궁침식도)
+
+	; 임신자각
+	if !TALENT:MASTER:임신 && BASE:MASTER:임신일수 == MAXBASE:MASTER:임신일수 / 10
+		; 임신자각처리
+		if FLAG:자궁대여료
+			CALL onMasterWombRentalStarted
+		else
+			CALL onMasterPregnantNoticed
+		endif
+
+		if CFLAG:MASTER:비자발임신
+			PALAM:MASTER:억울 += 1000
+		endif
+
+		CALL getTalent("임신")
+		EXP:MASTER:임신경험++
+		if CFLAG:MASTER:아이종족 > 1
+			EXP:MASTER:이종임신경험++
+		endif
+	elseif FLAG:자궁대여료 && BASE:MASTER:임신일수 && !TALENT:MASTER:임신
+		CALL onMasterWombRentalStarted
+
+		CALL getTalent("임신")
+		EXP:MASTER:임신경험++
+		if CFLAG:MASTER:아이종족 > 1
+			EXP:MASTER:이종임신경험++
+		endif
+	endif
+
+	; 임신중일 경우
+	if BASE:MASTER:임신일수 > 0
+	
+		if BASE:MASTER:임신일수 % 5 == 0 || !RAND:10
+			CALL onPregnencyStep
+		endif
+	
+		; 점차 자궁크기 증가
+		BASE:MASTER:자궁크기 = LIMIT(BASE:MASTER:자궁크기, MAXBASE:MASTER:자궁크기 * BASE:MASTER:임신일수 / MAXBASE:MASTER:임신일수, MAXBASE:MASTER:자궁크기)
+		; 점차 모유최대량 증가
+		; 모유체질일 경우 최대량 제한 없어짐
+		if TALENT:MASTER:모유체질
+			MAXBASE:MASTER:모유 = MAXBASE:MASTER:모유 + 30 + RAND:20
+		else
+			MAXBASE:MASTER:모유 = LIMIT(MAXBASE:MASTER:모유 + 30 + RAND:20, 0, 1500)
+		endif
+	endif
+
+	; 임신중이 아닐경우
+	if BASE:MASTER:임신일수 == 0
+		; 점차 자궁크기 감소
+		BASE:MASTER:자궁크기 = LIMIT(BASE:MASTER:자궁크기 - ((10000 * (BASE:MASTER:자궁크기 / MAXBASE:MASTER:자궁크기)) + RAND:100), 100, MAXBASE:MASTER:자궁크기)
+		; 점차 모유최대량 감소
+		; 단 모유체질일 경우 감소하지 않음
+		if !TALENT:MASTER:모유체질 && MAXBASE:MASTER:모유
+			MAXBASE:MASTER:모유 = LIMIT(MAXBASE:MASTER:모유 - (10 + RAND:20), 0, 1500)
+
+			if MAXBASE:MASTER:모유 == 0
+				printFormW 임신이 끝나 %CALLNAME:MASTER%의 %kr(partStrRaw(112), "은", "는")% 더 이상 모유를 내지 않게 되었다
+			endif
+		endif
+	endif
+
+	if TALENT:MASTER:임신 && BASE:MASTER:임신일수 == MAXBASE:MASTER:임신일수 / 5
+		if CFLAG:MASTER:아이종족 == 1 && RAND:(MAXBASE:MASTER:자궁침식도) < BASE:MASTER:자궁침식도
+			; 인간임신실패 - 낙태
+			; 자궁침식도 감소
+			CALL colorPRINTW(0xcc0000, @"%kr(CALLNAME:MASTER, "은", "는")% 배에서 격통을 느꼈다")
+			printFormW 이미 이종의 정액에 수 차례 범해진 %CALLNAME:MASTER%의 %kr(partStr(116), "은", "는")% 사람의 아이를 무의식중에 거부해버렸다...
+			
+			BASE:MASTER:자궁침식도 = LIMIT(BASE:MASTER:자궁침식도 - (1 + RAND:4), 0, MAXBASE:MASTER:자궁침식도)
+
+			CALL abort
+		elseif CFLAG:MASTER:아이종족 > 1 && RAND:(MAXBASE:MASTER:자궁침식도) < MAXBASE:MASTER:자궁침식도 - BASE:MASTER:자궁침식도
+			; 이종임신실패 - 낙태
+			; 자궁침식도 증가
+			CALL colorPRINTW(0xcc0000, @"%kr(CALLNAME:MASTER, "은", "는")% 갑자기 다리 사이로 대량의 피를 흘렸다")
+			printFormW %CALLNAME:MASTER%의 %kr(partStr(116), "은", "는")% 아직 사림이기를 포기하지 않은 듯 안간힘을 쓰며 이종의 아이를 쫓아내버렸다...
+			
+			BASE:MASTER:자궁침식도 = LIMIT(BASE:MASTER:자궁침식도 + (1 + RAND:4), 0, MAXBASE:MASTER:자궁침식도)
+
+			CALL abort
+		endif
+	endif
+	
+	if TALENT:MASTER:임신 && BASE:MASTER:임신일수 == 2 * MAXBASE:MASTER:임신일수 / 5
+		if !RAND:10 && TALENT:MASTER:자궁벌어짐
+			; 자궁경관무력증
+			printFormW %CALLNAME:MASTER%의 상태가 이상하다...
+			CALL colorPRINTW(0xcc0000, @"%kr(CALLNAME:MASTER, "은", "는")% 불길한 예감을 느끼자마자 순간 아랫배에 위화감을 느꼈다")
+			printFormW 수없이 개발된 나머지 %CALLNAME:MASTER%의 자궁 입구가 벌어져버려 그만 아이를 놓치고 말았다
+			
+			CALL abort
+		endif
+	endif
+
+	if BASE:MASTER:임신일수 == MAXBASE:MASTER:임신일수
+		CALL birth
+	endif

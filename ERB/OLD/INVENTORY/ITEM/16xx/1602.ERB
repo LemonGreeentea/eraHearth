@@ -1,0 +1,24 @@
+﻿; 장검
+@itemOption1602()
+	RESULTS '= "[공격력+7]"
+
+@itemExpl1602()
+	RESULTS '= "표준적인 장검이다."
+
+@isUsable1602(targetIdx)
+#dim dynamic targetIdx
+	return 0
+
+@onUseItem1602(targetIdx)
+#dim dynamic targetIdx
+
+@isEquipable1602
+	return 1
+@isUnequipable1602
+	return 1
+
+@onEquip1602
+	ABL:MASTER:공격력 += 7
+
+@onUnequip1602
+	ABL:MASTER:공격력 -= 7

@@ -1,0 +1,34 @@
+﻿@customizeBodyParts
+#dim dynamic partIdx
+	
+$inputLoop
+	clearLine 99999
+	printFormL 신체 부위의 호칭 변경
+	printFormL 어느 부위의 부르는 이름을 변경할까요?
+
+	for partIdx, 101, 200
+		if strlens(BASENAME:partIdx) == 0
+			continue
+		endif
+		
+		printFormL [{partIdx}] %substringu(BASENAME:partIdx, 0, strlensu(BASENAME:partIdx) - 2)%(현재 : %CSTR:MASTER:partIdx%)
+	next
+
+	PRINTL [999] 돌아간다
+
+	input
+	
+	if 101 <= RESULT && RESULT <= 199
+		partIdx = RESULT
+		printFormL 새 이름을 입력하세요(현재: %CSTR:MASTER:RESULT%) - 입력하지 않을 경우 돌아갑니다
+		
+		INPUTS
+		if strlens(RESULTS)
+			CSTR:MASTER:partIdx = %RESULTS%
+			printFormL %substring(BASENAME:partIdx, 0, strlensu(BASENAME:partIdx) - 2)%을 앞으로 %kr(CSTR:MASTER:partIdx, "으로", "로")% 부르도록 합니다.
+		endif
+	elseif RESULT == 999
+		return
+	endif
+
+	goto inputLoop

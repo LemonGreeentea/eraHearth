@@ -1,0 +1,80 @@
+﻿@showMenu
+	; Target does not exist
+	if !isMasterFree()
+		setcolor 0x777777
+	; 자궁대여중
+	elseif FLAG:자궁대여료
+		setcolor 0x777777
+	elseif FLAG:원정중
+		setcolor 0x777777
+	endif
+	PRINTLC [101] - 미궁으로
+	resetcolor
+
+	; Target already exists
+	if !isMasterFree() || hasQuest() || FLAG:원정중
+		setcolor 0x777777
+	endif
+	PRINTLC [102] - 의뢰 수주
+	resetcolor
+
+	; Target does not exist
+	if !isMasterFree() || !hasQuest() || FLAG:원정중
+		setcolor 0x777777
+	endif
+	PRINTLC [103] - 의뢰 취소
+	resetcolor
+
+	if hasDeliverQuest()
+		if !isMasterFree() || !hasDeliveryItems()
+			setcolor 0x777777
+		endif
+		PRINTLC [104] - 납품
+		resetcolor
+	endif
+	PRINTL
+	PRINTL
+
+	PRINTLC [201] - 상태창
+	PRINTLC [202] - 인벤토리
+	if !isMasterFree()
+		setColor 0x777777
+	endif
+	PRINTLC [203] - 장비변경
+	resetColor
+
+	PRINTLC [204] - 스킬창
+	resetColor
+	PRINTL
+
+	if !isMasterFree() || FLAG:원정중
+		setColor 0x777777
+	endif
+	PRINTLC [301] - 상가
+	PRINTLC [302] - 뒷골목
+	PRINTLC [303] - 성당
+	PRINTLC [304] - 연금술 공방
+	resetColor
+	PRINTL
+	
+
+	PRINTLC [701] - 생물도감
+	PRINTL
+	PRINTL
+
+	PRINTLC [801] - 저장
+	PRINTLC [802] - 불러오기
+	PRINTLC [803] - CONFIG
+	PRINTL
+	
+	if FLAG:원정중
+		setColor 0x777777
+	endif
+	PRINTLC [900] - 노숙한다
+	resetColor
+
+	if !isMasterFree() || FLAG:원정중
+		setColor 0x777777
+	endif
+	PRINTLC [901] - 여관으로
+	resetColor

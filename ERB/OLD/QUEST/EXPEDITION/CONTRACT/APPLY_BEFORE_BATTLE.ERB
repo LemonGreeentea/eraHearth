@@ -1,0 +1,50 @@
+﻿@applyContractBeforeBattle
+
+	if FLAG:흉포의계약
+		setColor 0xd40404
+		fontBold
+		printFormL [흉포의 계약Lv{FLAG:흉포의계약}]이 적용된다
+		fontRegular
+		resetColor
+
+		repeat FLAG:흉포의계약
+			TCVAR:TARGET:공격력 += TCVAR:TARGET:공격력 * 3 / 20
+			TCVAR:TARGET:마법공격 += TCVAR:TARGET:마법공격 / 10
+		rend
+	endif
+	
+	if FLAG:죽음의계약
+		setColor 0xd40404
+		fontBold
+		printFormL [탈진의 계약Lv{FLAG:죽음의계약}]이 적용된다
+		fontRegular
+		resetColor
+
+		repeat FLAG:죽음의계약
+			TCVAR:MASTER:공격력 -= TCVAR:MASTER:공격력 / 10
+			TCVAR:MASTER:마법공격 -= TCVAR:MASTER:마법공격 / 20
+		rend
+	endif
+	
+	if FLAG:견고의계약
+		setColor 0xd40404
+		fontBold
+		printFormL [견고의 계약Lv{FLAG:견고의계약}]이 적용된다
+		fontRegular
+		resetColor
+
+		repeat FLAG:견고의계약
+			TCVAR:TARGET:방어력 += TCVAR:TARGET:방어력 / 10
+			TCVAR:TARGET:마법내성 += TCVAR:TARGET:마법내성 * 3 / 40
+		rend
+	endif
+	
+	if FLAG:부동의계약
+		setColor 0xd40404
+		fontBold
+		printFormL [부동의 계약Lv{FLAG:부동의계약}]이 적용된다
+		fontRegular
+		resetColor
+
+		CALL applyBuffTo(TARGET, "보호", FLAG:부동의계약)
+	endif

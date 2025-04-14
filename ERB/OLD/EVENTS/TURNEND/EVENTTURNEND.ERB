@@ -1,0 +1,34 @@
+﻿; @expeditionTurnEnd에도 필요하면 추가할것
+@EVENTTURNEND
+
+	CALL systemNotify("하루가 끝났습니다")
+
+	DAY++
+	if FLAG:장기숙박 > 0
+		FLAG:장기숙박 -= 1
+	endif
+	
+	CALL updateExchangeRate
+
+	CALL statsUpgrade
+
+	CALL parasite
+	CALL stdStep
+	CALL stdRealize
+	CALL mensAndPreg
+
+	CALL sleepMaster
+
+	CALL holeTight
+	CALL addiction
+	CALL tattoo
+	CALL arousal
+	CALL questExpire
+	
+	CALL wakeupMaster
+
+	CALL relax
+	
+	FLAG:여관숙박 = 0
+
+	begin shop

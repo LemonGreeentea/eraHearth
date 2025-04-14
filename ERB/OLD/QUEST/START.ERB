@@ -1,0 +1,33 @@
+﻿@startExpedition		
+
+	PRINTL 미궁으로 원정을 떠납니다.
+	PRINTW 미궁의 입구에서부터 싸늘한 기운이 당신을 맞이합니다.
+
+	FLAG:원정중 = 1
+	FLAG:미궁위치 = 1
+	FLAG:미궁상층발견 = 1
+	FLAG:미궁하층발견 = 0
+
+	CALL initCharFlags
+	CALL initContracts
+	
+	; Some misc events come here.
+
+	CALL expedition
+
+@initCharFlags
+#dim dynamic partIdx
+
+	; PALAM -> CFLAG 인계
+	for partIdx, 501, 600
+		CFLAG:MASTER:partIdx = PALAM:MASTER:(partIdx - 400)
+	next
+
+@initContracts
+#dim dynamic contractIdx
+
+	FLAG:계약배율 = 100
+
+	for contractIdx, 701, 800
+		FLAG:contractIdx = 0
+	next

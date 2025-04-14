@@ -1,0 +1,44 @@
+﻿;===============================================
+; ○ 설명
+; 이미지 등을 처리할 수 있는 함수
+;
+;===============================================
+
+;-----------------------------------------------
+; 작은 얼굴 이미지를 불러오는 함수
+;-----------------------------------------------
+@FACE_IMAGE_N(String, imSpace)
+; Stiring을 출력, iSpace가 1이면 여백도 줌
+#DIM iSize
+#DIMS sHtml
+#DIM iFont_Hei_mag
+#DIM iEnter_Con
+#DIM iSpace
+#DIMS String
+#DIM Integer
+#DIM iID
+#DIM imSpace
+;SIF ! FLAG:이미지설정
+;   RETURN 0
+PRINTFORML
+iEnter_Con = 0
+sHtml =  <p align='left'><nobr>
+sHtml += @"<shape type='space' param='{iSpace}'><img src='%String%' height='700' ypos='0'>"
+HTML_PRINT sHtml
+
+RETURN 0
+
+@TALK_IMAGE(targets, faces)
+#DIM targets
+#DIM faces
+#DIM state
+#DIMS facep
+
+facep = CHARA_FACE_{targets}_{faces}
+CALL FACE_IMAGE_N(facep,0)
+PRINTFORML
+PRINTFORML
+PRINTFORML
+PRINTFORML
+PRINTFORML
+PRINTFORM             

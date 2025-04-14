@@ -1,0 +1,19 @@
+﻿@onMasterOrgasm_e(orgasmParts, orgasmCounts)
+#dim ref orgasmParts, 0
+#dim dynamic orgasmCounts
+
+	trycCALLform c{CFLAG:TARGET:캐릭터번호}onMasterOrgasm(orgasmParts, orgasmCounts)
+		;
+	catch
+		CALL fallbackOnMasterOrgasm_e(orgasmParts, orgasmCounts)
+	endcatch
+
+
+@onMasterInsuffOrgasm_e
+
+	trycCALLform c{CFLAG:TARGET:캐릭터번호}onMasterInsuffOrgasm()
+		;
+	catch
+		CALL fallbackOnMasterInsuffOrgasm_e()
+	endcatch
+

@@ -1,0 +1,16 @@
+﻿@badRoom
+#dim dynamic randValue
+
+	; todo 여기 작업
+	randValue = frand(100)
+	
+	if randValue < 33
+		; todo
+		CALL encounter
+	elseif randValue < 66
+		; 샘(33%)
+		CALL badRoomFountain
+	else
+		; 보물상자(33%)
+		CALL badRoomTreasureChest
+	endif

@@ -1,0 +1,11 @@
+﻿@checkCum
+
+	if TALENT:TARGET:여성
+		return
+	endif
+
+	if PALAM:TARGET:사정 >= 10000
+		CALL cumIntoMaster(TCVAR:TARGET:성희롱부위)
+
+		PALAM:TARGET:사정 -= 10000
+	endif

@@ -1,0 +1,143 @@
+﻿@SHOW_STATUS
+#dim dynamic savedLineCount
+
+	savedLineCount = LINECOUNT
+
+$moveLoop
+	PRINTL 
+
+	barstr BASE:MASTER:체력, MAXBASE:MASTER:체력, 10
+	printForm %CALLNAME:MASTER%의 체력 : %RESULTS% ({BASE:MASTER:체력}/{MAXBASE:MASTER:체력})
+	barstr BASE:MASTER:마력, MAX(MAXBASE:MASTER:마력, 1), 10
+	printFormL /마력 : %RESULTS% ({BASE:MASTER:마력}/{MAXBASE:MASTER:마력})
+
+	barstr BASE:TARGET:체력, MAXBASE:TARGET:체력, 10
+	printForm %NAME:TARGET%의 체력 : %RESULTS% ({BASE:TARGET:체력}/{MAXBASE:TARGET:체력})
+	barstr BASE:TARGET:마력, MAX(MAXBASE:TARGET:마력, 1), 10
+	printFormL /마력 : %RESULTS% ({BASE:TARGET:마력}/{MAXBASE:TARGET:마력})
+	
+	drawLine
+	
+	CALL showPosition
+	
+	PRINTL
+	
+	if !hasBuff(MASTER, "속박")
+		PRINTL [w] 상 [s] 하 [a] 좌 [d] 우
+	else
+		PRINTL  - 속박되어 움직일 수 없다... - 
+	endif
+	
+	printButton "[q] 행동", "q"
+	print  
+	printButton "[e] 상태창", "e"
+	print  
+	printButton "[r] 대기", "r"
+	PRINTL
+	
+	if shouldMasterDown()
+		return
+	endif
+	
+	oneINPUTS
+
+	if !hasBuff(MASTER, "속박")
+		if RESULTS == "w" || RESULTS == "W"
+			if TCVAR:MASTER:상하 != -4
+				TFLAG:전턴상하이동 = -1
+				TFLAG:전턴좌우이동 = 0
+				TCVAR:MASTER:상하--
+				TCVAR:MASTER:이번턴이동 = 1
+				CALL afterBattleAction(1)
+			endif
+		elseif RESULTS == "a" || RESULTS == "A"
+			if TCVAR:MASTER:좌우 != -4
+				TFLAG:전턴상하이동 = 0
+				TFLAG:전턴좌우이동 = -1
+				TCVAR:MASTER:좌우--
+				TCVAR:MASTER:이번턴이동 = 1
+				CALL afterBattleAction(1)
+			endif
+		elseif RESULTS == "s" || RESULTS == "S"
+			if TCVAR:MASTER:상하 != 4
+				TFLAG:전턴상하이동 = 1
+				TFLAG:전턴좌우이동 = 0
+				TCVAR:MASTER:상하++
+				TCVAR:MASTER:이번턴이동 = 1
+				CALL afterBattleAction(1)
+			endif
+		elseif RESULTS == "d" || RESULTS == "D"
+			if TCVAR:MASTER:좌우 != 4
+				TFLAG:전턴상하이동 = 0
+				TFLAG:전턴좌우이동 = 1
+				TCVAR:MASTER:좌우++
+				TCVAR:MASTER:이번턴이동 = 1
+				CALL afterBattleAction(1)
+			endif
+		endif
+	endif
+
+	if RESULTS == "q" || RESULTS == "Q"
+		return
+	elseif RESULTS == "e" || RESULTS == "E"
+		CALL showMasterInfo
+	elseif RESULTS == "r" || RESULTS == "R"
+		CALL afterBattleAction(1)
+	endif
+
+	; clearLine (LINECOUNT - savedLineCount)
+	goto moveLoop
+
+@showPosition
+#dim dynamic xPos
+#dim dynamic yPos
+
+	for yPos, -4, 5
+		for xPos, -4, 5
+			if TCVAR:MASTER:좌우 == xPos && TCVAR:MASTER:상하 == yPos
+				if TCVAR:TARGET:좌우 == xPos && TCVAR:TARGET:상하 == yPos
+					setColor 0xcccc00
+				else
+					setColor 0x00cc00
+				endif
+			elseif TCVAR:TARGET:좌우 == xPos && TCVAR:TARGET:상하 == yPos
+				setColor 0xcc0000
+			endif
+			
+			if TCVAR:MASTER:좌우 == xPos && TCVAR:MASTER:상하 == yPos
+				if TCVAR:TARGET:좌우 == xPos && TCVAR:TARGET:상하 == yPos
+					printButton "※", "※"
+				else
+					printButton "★", "★"
+				endif
+			elseif TCVAR:MASTER:좌우 - 1 == xPos && TCVAR:MASTER:상하 == yPos
+				printButton "←", "a"
+			elseif TCVAR:MASTER:좌우 + 1 == xPos && TCVAR:MASTER:상하 == yPos
+				printButton "→", "d"
+			elseif TCVAR:MASTER:좌우 == xPos && TCVAR:MASTER:상하 - 1 == yPos
+				printButton "↑", "w"
+			elseif TCVAR:MASTER:좌우 == xPos && TCVAR:MASTER:상하 + 1 == yPos
+				printButton "↓", "s"
+			elseif TCVAR:MASTER:좌우 - 1 == xPos && TCVAR:MASTER:상하 - 1 == yPos
+				printButton "□", "​"
+			elseif TCVAR:MASTER:좌우 + 1 == xPos && TCVAR:MASTER:상하 - 1 == yPos
+				printButton "□", "​"
+			elseif TCVAR:MASTER:좌우 - 1 == xPos && TCVAR:MASTER:상하 + 1 == yPos
+				printButton "□", "​"
+			elseif TCVAR:MASTER:좌우 + 1 == xPos && TCVAR:MASTER:상하 + 1 == yPos
+				printButton "□", "​"
+			elseif TCVAR:TARGET:좌우 == xPos && TCVAR:TARGET:상하 == yPos
+				print ★
+			else
+				print □
+			endif
+
+			resetColor
+		next
+		PRINTL
+	next
+
+	CALL colorPrint(0x00cc00, @"★ %CALLNAME:MASTER% ")
+	CALL colorPrint(0xcc0000, @"★ %NAME:TARGET% ")
+	CALL colorPrint(0xcccc00, "※ 교전중")
+	PRINTL

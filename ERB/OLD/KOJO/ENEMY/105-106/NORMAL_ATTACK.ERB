@@ -1,0 +1,19 @@
+﻿@c105onNormalAttack
+
+	if RAND:5 && BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 2
+		CALL c105onSexualAttack
+	elseif RAND:3 && BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 3
+		CALL c105onSexualAttack
+	else
+		CALL fallbackOnNormalAttack
+	endif
+
+@c106onNormalAttack
+
+	if RAND:5 && BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 2
+		CALL c106onSexualAttack
+	elseif RAND:3 && BASE:MASTER:체력 < MAXBASE:MASTER:체력 / 3
+		CALL c106onSexualAttack
+	else
+		CALL fallbackOnNormalAttack
+	endif

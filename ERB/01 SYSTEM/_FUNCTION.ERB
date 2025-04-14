@@ -1,0 +1,29 @@
+﻿;===============================================
+; ○ 설명
+; 여러가지 함수를 저장하는 곳, eratohoK에서 뜯어옴
+;
+;===============================================
+;-------------------------------------------------
+; 한 줄로 선을 긋는 함수
+;-------------------------------------------------
+@SINGLE_DRAWLINE(LINE = "-", COLOR = -1)
+#DIM COLOR
+#DIM COLOR_TMP
+#DIMS LINE
+#DIMS TMP
+
+COLOR_TMP = GETCOLOR()
+SIF COLOR != -1
+	SETCOLOR COLOR
+
+TMP '= HTML_GETPRINTEDSTR(0)
+;STRFIND는 정규 표현에 대응하고 있지 않아서 이런 일을 하는 처지가 된다
+;실제의 정규 표현 처리에 걸치기까지 한 번 이스케이프를 먹는 것 같은 것으로 슬래시는 이중으로 건네줄 필요가 있다.
+IF FINDELEMENT(TMP, "([^ ])\\1{15}", 0, 1, 0) == 0
+	RETURN
+ELSE
+	DRAWLINEFORM %LINE%
+ENDIF
+
+SIF COLOR != -1
+	SETCOLOR COLOR_TMP

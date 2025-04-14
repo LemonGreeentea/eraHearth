@@ -1,0 +1,24 @@
+﻿@COM_ABLE1002
+
+	; 붉은보석지팡이 장착시 사용가능
+	return !isMasterDown() && isSkillAvailable(1002, "무기", 1606) && !hasBuff(MASTER, "침묵")
+
+@COM1002
+
+	PRINTL 마력 폭탄을 쏘아보냈다!
+	
+	if BASE:MASTER:마력 < 96
+		PRINTL 하지만 마력이 부족하여 실패했다...
+		return 0
+	endif
+	BASE:MASTER:마력 -= 96
+	
+	; 거리에 따라 실패확률 존재
+	if RAND:20 < inBattleDistance()
+		PRINTL 빗나갔다!
+		return 1
+	endif
+	
+	LOSEBASE:체력 = randomizeDamage(20 * MAX(1, getActualMatk(MASTER) * 3 - getActualMdef(TARGET)))
+
+	return 1
