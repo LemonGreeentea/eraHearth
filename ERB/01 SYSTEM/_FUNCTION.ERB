@@ -27,3 +27,27 @@ ENDIF
 
 SIF COLOR != -1
 	SETCOLOR COLOR_TMP
+
+;-------------------------------------------------
+;네／아니오의 선택지를 표시해 입력 결과를 돌려주는 함수
+;인수 0=긍정 선택지의 문자열, 1=부정 선택지의 문자열
+;반환값 0=네, 1=아니오
+;-------------------------------------------------
+@ASK_YN(AR:0 = "  네  ", AR:1 = "아니오")
+#DIMS AR, 2
+#DIM LOC
+CURRENTREDRAW
+LOC = RESULT
+REDRAW 0
+PRINTBUTTON @" 0[%AR:0%]", 0
+PRINTL 
+PRINTBUTTON @" 1[%AR:1%]", 1
+PRINTL 
+$INPUT_LOOP
+INPUT
+IF RESULT != 0 && RESULT != 1
+	CLEARLINE 1
+	GOTO INPUT_LOOP
+ENDIF
+REDRAW LOC
+RETURN RESULT
