@@ -10,25 +10,29 @@
 
 		CALL continueExpeditionShopMenu
 	endif
-
 	PRINTL
-	drawline
+	PRINTL
+	DRAWLINE
 
-	fontBold
-	setColor 0xffffff
-	printForm {DAY}
-	fontRegular
-	resetColor
+	;계절에 대한 설명(넣어야함)
+	PRINT 봄의 
+
+	FONTBOLD
+	SETCOLOR 0xffffff
+	PRINTFORM {DAY}
+	FONTREGULAR
+	RESETCOLOR
+	PRINT 일차 아침/밤 
 	
-	print 일차 소지금 〈
+	PRINT 소지금〈
 
-	fontBold
-	setColor 0xcccc00
+	FONTBOLD
+	SETCOLOR 0xcccc00
 	printForm %TOSTR(MONEY,"#,###")%
 	fontRegular
 	resetColor
 	
-	print 〉 마석 〈
+	print 〉 마석〈
 
 	fontBold
 	setColor 0x0077cc

@@ -1,15 +1,15 @@
 ﻿@showMenu
 	; Target does not exist
-	if !isMasterFree()
-		setcolor 0x777777
+	IF !isMasterFree()
+		SETCOLOR 0x777777
 	; 자궁대여중
-	elseif FLAG:자궁대여료
+	ELSEIF FLAG:자궁대여료
 		setcolor 0x777777
-	elseif FLAG:원정중
+	ELSEIF FLAG:원정중
 		setcolor 0x777777
-	endif
-	PRINTLC [101] - 미궁으로
-	resetcolor
+	ENDIF
+	PRINTLC [101] - 여관관리
+	RESETCOLOR
 
 	; Target already exists
 	if !isMasterFree() || hasQuest() || FLAG:원정중

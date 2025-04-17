@@ -8,8 +8,13 @@
 	;캐릭터 복장도 패스
 	;CALL customizeClothes
 	
-	PRINTW 설정 완료
-	PRINTW 여기에 대단한 튜토리얼 스토리가 진행될 예정입니다!
+	PRINTL 프롤로그를 보시겠습니까?
+	CALL ASK_YN()
+	IF RESULT == 0
+		PRINTW 여기에 굉장한 프롤로그가 진행될 예정
+	ELSE
+		PRINTW 프롤로그를 스킵합니다.
+	ENDIF
 
 ; ------------------
 ; 이름 및 호칭 설정(완료)
@@ -99,7 +104,7 @@ $inputHistory
 FIRST_LINE = LINECOUNT
 
 PRINTL
-PRINTL ***** 당신은 어떤 사람이었나요? *****
+PRINTL ***** 당신은 어떤 사람인가요? *****
 PRINTL
 PRINTL [1] - 이세계에서 온 고등학생
 PRINTL       불의의 사고로 이세계로 오게 된 평범한 고등학생
