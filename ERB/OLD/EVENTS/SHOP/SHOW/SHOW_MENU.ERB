@@ -1,80 +1,71 @@
 ﻿@showMenu
 	; Target does not exist
-	IF !isMasterFree()
-		SETCOLOR 0x777777
-	; 자궁대여중
-	ELSEIF FLAG:자궁대여료
-		setcolor 0x777777
-	ELSEIF FLAG:원정중
-		setcolor 0x777777
+
+	;101번 - 여관관리
+	;여관을 관리하는 탭임. 상시 이용 가능
+	PRINTL 《 운영 》
+	PRINTLC  [101] - 여관관리
+	PRINTLC  [102] - 의뢰
+	PRINTLC  [103] - 탐색
+	PRINTLC  [104] - 상점가
+	PRINTL
+	PRINTLC  [105] - 창고
+	IF FLAG:연구해금 == 1
+		PRINTLC  [106] - 연구
 	ENDIF
-	PRINTLC [101] - 여관관리
-	RESETCOLOR
-
-	; Target already exists
-	if !isMasterFree() || hasQuest() || FLAG:원정중
-		setcolor 0x777777
-	endif
-	PRINTLC [102] - 의뢰 수주
-	resetcolor
-
-	; Target does not exist
-	if !isMasterFree() || !hasQuest() || FLAG:원정중
-		setcolor 0x777777
-	endif
-	PRINTLC [103] - 의뢰 취소
-	resetcolor
-
-	if hasDeliverQuest()
-		if !isMasterFree() || !hasDeliveryItems()
-			setcolor 0x777777
-		endif
-		PRINTLC [104] - 납품
-		resetcolor
-	endif
-	PRINTL
 	PRINTL
 
-	PRINTLC [201] - 상태창
-	PRINTLC [202] - 인벤토리
-	if !isMasterFree()
-		setColor 0x777777
-	endif
-	PRINTLC [203] - 장비변경
-	resetColor
-
-	PRINTLC [204] - 스킬창
-	resetColor
+	PRINTL
+	PRINTL 《 캐릭터 》
+	PRINTLC  [201] - 캐릭터정보
+	PRINTLC  [202] - 교류
+	PRINTLC  [203] - 훈련
+	PRINTLC  [204] - 휴식
+	;정착지 ~ 천문대 해금 시 메뉴 추가
+	IF FLAG:정착지해금 == 1 || FLAG:축제해금 == 1 || FLAG:성당해금 == 1 || FLAG:천문대해금 == 1
+		PRINTL
+		IF FLAG:정착지해금 == 1
+			PRINTLC  [205] - 정착지
+		ENDIF
+		IF FLAG:축제해금 == 1
+			PRINTLC  [206] - 축제
+		ENDIF
+		IF FLAG:성당해금 == 1
+			PRINTLC  [207] - 성당
+		ENDIF
+		IF FLAG:천문대해금 == 1
+			PRINTLC  [208] - 천문대
+		ENDIF
+	ENDIF
 	PRINTL
 
-	if !isMasterFree() || FLAG:원정중
-		setColor 0x777777
-	endif
-	PRINTLC [301] - 상가
-	PRINTLC [302] - 뒷골목
-	PRINTLC [303] - 성당
-	PRINTLC [304] - 연금술 공방
-	resetColor
-	PRINTL
-	
+	IF FLAG:뒷골목해금 == 1 || FLAG:인연의방해금 == 1 || FLAG:뉴게임해금 || FLAG:유물해금 == 1
+		PRINTL
+		PRINTL 《 특수 》
+		IF FLAG:뒷골목해금 == 1
+			PRINTLC  [401] - 뒷골목
+		ENDIF
+		IF FLAG:인연의방해금 == 1
+			PRINTLC  [402] - 인연의 방
+		ENDIF
+		IF FLAG:뉴게임해금 == 1
+			PRINTLC  [403] - 뉴게임
+		ENDIF
+		IF FLAG:유물해금 == 1
+			PRINTLC  [404] - 유물
+		ENDIF
+		PRINTL
+	ENDIF
 
-	PRINTLC [701] - 생물도감
 	PRINTL
+	PRINTL 《 시스템 》
+	PRINTLC  [801] - 세이브
+	PRINTLC  [802] - 로드
+	PRINTLC  [803] - 설정
+	PRINTLC  [804] - 도움말
 	PRINTL
-
-	PRINTLC [801] - 저장
-	PRINTLC [802] - 불러오기
-	PRINTLC [803] - CONFIG
+	PRINTLC  [805] - 테스트1
+	PRINTLC  [806] - 테스트2
+	PRINTLC  [807] - 테스트3
+	PRINTLC  [808] - 개발자의 방
 	PRINTL
-	
-	if FLAG:원정중
-		setColor 0x777777
-	endif
-	PRINTLC [900] - 노숙한다
-	resetColor
-
-	if !isMasterFree() || FLAG:원정중
-		setColor 0x777777
-	endif
-	PRINTLC [901] - 여관으로
-	resetColor

@@ -22,30 +22,38 @@
 	PRINTFORM {DAY}
 	FONTREGULAR
 	RESETCOLOR
-	PRINT 일차 아침/밤 
+	PRINT 일차 아침
+
 	
-	PRINT 소지금〈
+	fontRegular
+	resetColor
+	
+	PRINT    소지금 : 
 
 	FONTBOLD
 	SETCOLOR 0xcccc00
 	printForm %TOSTR(MONEY,"#,###")%
 	fontRegular
 	resetColor
-	
-	print 〉 마석〈
-
-	fontBold
-	setColor 0x0077cc
-	printForm %TOSTR(FLAG:마석,"#,###")%
-	
-	if !FLAG:마석
-		print 없음
-	endif
-	fontRegular
-	resetColor
-
-	PRINTL 〉
 	PRINTL
+	PRINTL
+
+	PRINTL =============[ 여관 관리 장부 ]=============
+	PRINTL
+	PRINTL  < 숙박현황 > : 빈 방 2 / 사용중 3
+	PRINTL  <  청결도  > : 높음                 <   식사   > : 충분
+	PRINT  < 마을상황 > : 평온함               
+	PRINTL <   소문   > : "도시에서 새로운 모험가들이 찾아오나봐"
+	PRINTL
+	PRINTL ============================================
+	PRINTFORML  행동력 : {BASE:MASTER:행동력} / {BASE:MASTER:최대행동력}
+	PRINTL   체력  : [■■■■■■■■■■■■■■■■■■■■■](100/100)
+	PRINTL   기력  : [■■■■■■■■■■■■■■■■■■■■■](100/100)
+	PRINTL 
+	
+	DRAWLINE
+	PRINTL 
+
 	
 	if FLAG:육변기형시작일
 		CALL showCumDump

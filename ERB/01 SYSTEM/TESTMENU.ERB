@@ -1,0 +1,80 @@
+﻿;===============================================
+; ○ 테스트 버튼의 처리를 하는 함수들
+; 
+;
+;===============================================
+
+;-----------------------------------------------
+; 테스트 버튼 1
+;-----------------------------------------------
+@TESTMENU01
+    IF FLAG:정착지해금 == 0
+        FLAG:정착지해금 = 1
+        PRINTW 정착지 해금 온
+    ELSE
+        FLAG:정착지해금 = 0
+        PRINTW 정착지 해금 오프
+    ENDIF
+    RETURN
+@TESTMENU02    
+    IF FLAG:축제해금 == 0
+        FLAG:축제해금 = 1
+        PRINTW 축제 해금 온
+    ELSE
+        FLAG:축제해금 = 0
+        PRINTW 축제 해금 오프
+    ENDIF
+    RETURN
+@TESTMENU03
+    IF FLAG:성당해금 == 0
+        FLAG:성당해금 = 1
+        FLAG:천문대해금 = 1
+        PRINTW 성당천문 해금 온
+    ELSE
+        FLAG:성당해금 = 0
+        FLAG:천문대해금 = 0
+        PRINTW  성당천문 해금 오프
+    ENDIF
+    RETURN
+
+@DEVROOMMENU
+    PRINTFORML 설정할 내용을 골라주세요
+    PRINTFORML 개발진행률 : 1퍼센트
+
+    $INPUTMENU
+    PRINTL [1] - 모든 메뉴 해금/잠금
+    PRINTL [99] - 돌아가기
+    INPUT
+    IF RESULT == 1
+        IF FLAG:연구해금 == 0
+            FLAG:연구해금 = 1
+            FLAG:정착지해금 = 1
+            FLAG:축제해금 = 1
+            FLAG:성당해금 = 1
+            FLAG:천문대해금 = 1
+            FLAG:뒷골목해금 = 1
+            FLAG:인연의방해금 = 1
+            FLAG:뉴게임해금 = 1
+            FLAG:유물해금 = 1
+            PRINTFORMW 모든 메뉴를 열었습니다.
+        ELSE
+            FLAG:연구해금 = 0
+            FLAG:정착지해금 = 0
+            FLAG:축제해금 = 0
+            FLAG:성당해금 = 0
+            FLAG:천문대해금 = 0
+            FLAG:뒷골목해금 = 0
+            FLAG:인연의방해금 = 0
+            FLAG:뉴게임해금 = 0
+            FLAG:유물해금 = 0
+            PRINTFORMW 모든 메뉴를 잠궜습니다.
+        ENDIF
+        GOTO INPUTMENU
+    ELSEIF RESULT == 99
+        RETURN
+    ELSE
+        GOTO INPUTMENU
+    ENDIF
+
+
+    RETURN
