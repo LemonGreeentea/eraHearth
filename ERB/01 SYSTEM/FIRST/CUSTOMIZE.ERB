@@ -11,7 +11,18 @@
 	PRINTL 프롤로그를 보시겠습니까?
 	CALL ASK_YN()
 	IF RESULT == 0
-		PRINTW 여기에 굉장한 프롤로그가 진행될 예정
+		;여관 고아 스타트
+		IF CFLAG:MASTER:태생 == 1
+			CALL PROLOGUE_INNCHILD
+		;이세계 고등학생 스타트
+		ELSEIF CFLAG:MASTER:태생 == 2
+			CALL PROLOGUE_HIGHSCHOOL
+		ELSEIF CFLAG:MASTER:태생 == 3
+			CALL PROLOGUE_FALLENNOBLE
+		ELSE
+			CALL PROLOGUE_NONE
+		ENDIF
+
 	ELSE
 		PRINTW 프롤로그를 스킵합니다.
 	ENDIF
@@ -106,13 +117,13 @@ FIRST_LINE = LINECOUNT
 PRINTL
 PRINTL ***** 당신은 어떤 사람인가요? *****
 PRINTL
-PRINTL [1] - 이세계에서 온 고등학생
-PRINTL       불의의 사고로 이세계로 오게 된 평범한 고등학생
-PRINTL       고등교육으로 지능이, 낯선 세계에 적응하기 위해 관찰이 높다.
-PRINTL
-PRINTL [2] - 거두어진 고아(추천)
+PRINTL [1] - 거두어진 고아(추천)
 PRINTL       전대 여관장에게 거둬 길러진 고아
 PRINTL       어릴 적 부터 여관일을 많이 하여 응대와 청결이 높다.
+PRINTL
+PRINTL [2] - 이세계에서 온 고등학생
+PRINTL       불의의 사고로 이세계로 오게 된 평범한 고등학생
+PRINTL       고등교육으로 지능이, 낯선 세계에 적응하기 위해 관찰이 높다.
 PRINTL
 PRINTL [3] - 몰락한 귀족 가문의 후계자
 PRINTL       상속권을 잃은 채 도망쳐와 남은 돈으로 여관을 인수하였다.
@@ -124,25 +135,6 @@ PRINTL
 INPUT
 ;고등학생
 IF RESULT == 1
-	PRINTL [이세계에서 온 고등학생]으로 시작하겠습니까?
-	PRINTL 
-	PRINTL 특징 : 지능 + 10, 관찰 + 10, <스마트폰> 소지(아직 미구현)
-	PRINTL 
-	
-	CALL ASK_YN
-	IF RESULT == 0
-		PRINTW [이세계에서 온 고등학생]으로 시작합니다.
-		CFLAG:MASTER:태생 = 1
-		ABL:MASTER:지능 += 10
-		ABL:MASTER:관찰 += 10
-		;스마트폰은 나중에 추가
-	ELSE
-		CLEARLINE LINECOUNT - FIRST_LINE
-		GOTO inputHistory
-	ENDIF
-
-;고아
-ELSEIF RESULT == 2
 	PRINTL [거두어진 고아]로 시작하겠습니까?
 	PRINTL 
 	PRINTL 특징 : 응대 + 10, 청결 + 5, 조리 + 10, 마을사람의 호감도 증가
@@ -151,11 +143,31 @@ ELSEIF RESULT == 2
 	CALL ASK_YN
 	IF RESULT == 0
 		PRINTW [거두어진 고아]로 시작합니다.
-		CFLAG:MASTER:태생 = 2
+		CFLAG:MASTER:태생 = 1
 		ABL:MASTER:조리 += 10
 		ABL:MASTER:청결 += 5
 		ABL:MASTER:응대 += 10
 		;마을사람 호감도 증가는 미구현
+	ELSE
+		CLEARLINE LINECOUNT - FIRST_LINE
+		GOTO inputHistory
+	ENDIF
+
+
+;고아
+ELSEIF RESULT == 2
+	PRINTL [이세계에서 온 고등학생]으로 시작하겠습니까?
+	PRINTL 
+	PRINTL 특징 : 지능 + 10, 관찰 + 10, <스마트폰> 소지(아직 미구현)
+	PRINTL 
+	
+	CALL ASK_YN
+	IF RESULT == 0
+		PRINTW [이세계에서 온 고등학생]으로 시작합니다.
+		CFLAG:MASTER:태생 = 2
+		ABL:MASTER:지능 += 10
+		ABL:MASTER:관찰 += 10
+		;스마트폰은 나중에 추가
 	ELSE
 		CLEARLINE LINECOUNT - FIRST_LINE
 		GOTO inputHistory
@@ -179,7 +191,8 @@ ELSEIF RESULT == 3
 		CLEARLINE LINECOUNT - FIRST_LINE
 		GOTO inputHistory
 	ENDIF
-
+ELSEIF RESULT == 666
+	CALL CUSTOM_313
 ELSE
 	CALL systemError("잘못된 입력입니다")
 	CLEARLINE 2

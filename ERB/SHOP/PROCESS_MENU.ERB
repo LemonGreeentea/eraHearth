@@ -7,11 +7,17 @@
 		endif
 	endif
 
-	; QUEST MENU
-	if RESULT == 101 && FLAG:자궁대여료 == 0 && isMasterFree() && !FLAG:원정중
-		CALL startExpedition
-		RESULT = 0
-	elseif RESULT == 102 && !hasHuntQuest() && !FLAG:원정중
+	; ------------------------------------------ 
+	;  운영 탭
+	;  - 연구말고는 항상 이용할 수 있는 곳
+	;  
+	;
+	; ------------------------------------------
+	; 여관관리
+	IF RESULT == 101
+		CALL INN_MANAGE
+	; 
+	ELSEIF RESULT == 102 && !hasHuntQuest() && !FLAG:원정중
 		CALL newQuestList
 	elseif RESULT == 103 && isMasterFree() && hasQuest()
 		CALL cancelQuest
