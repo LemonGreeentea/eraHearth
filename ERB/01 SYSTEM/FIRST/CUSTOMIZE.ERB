@@ -191,7 +191,7 @@ ELSEIF RESULT == 3
 		CLEARLINE LINECOUNT - FIRST_LINE
 		GOTO inputHistory
 	ENDIF
-ELSEIF RESULT == 666
+ELSEIF RESULT == 313
 	CALL CUSTOM_313
 ELSE
 	CALL systemError("잘못된 입력입니다")
@@ -199,6 +199,8 @@ ELSE
 	GOTO inputHistory
 ENDIF
 
+
+[SKIPSTART]
 @customizeCharacteristics
 
 	PRINTL
@@ -272,3 +274,4 @@ $inputCharacteristics
 
 	ITEM:1501 = 1
 	CALL changeMasterEquips(15, 1501) ; 보통속옷
+[SKIPEND]

@@ -1,0 +1,101 @@
+﻿@processMenu
+
+	; This commands are always OK
+	if RESULT != 201 && RESULT != 202 && RESULT < 800 || RESULT == 901
+		if !isMasterFree()
+			return 0
+		endif
+	endif
+
+	; ------------------------------------------ 
+	;  운영 탭
+	;  - 연구말고는 항상 이용할 수 있는 곳
+	;  - 여관관리 등에 핵심이 되는 곳
+	; ------------------------------------------
+	; 여관관리
+	IF RESULT == 101
+		CALL INN_MANAGE
+	; 의뢰
+	ELSEIF RESULT == 102
+		CALL MENU_REQUEST_BOARD
+	; 탐색
+	ELSEIF RESULT == 103
+		CALL MENU_EXPLORE
+	; 상점가
+	ELSEIF RESULT == 104
+		CALL MENU_SHOP_DISTRICT
+	; 창고
+	ELSEIF RESULT == 105
+		CALL MENU_STORAGE
+	; 연구
+	ELSEIF RESULT == 105 && FLAG:연구해금 == 1
+		CALL MENU_RESEARCH
+
+	; ------------------------------------------ 
+	;  캐릭터 탭
+	;  - 해금 요소 많음
+    ;  - 주로 캐릭터와 관련된 곳
+	; ------------------------------------------
+	; 캐릭터정보
+	ELSEIF RESULT == 201
+		CALL MENU_CHARACTER_INFO
+	;교류
+	ELSEIF RESULT == 202
+		CALL MENU_INTERACTION
+	;훈련
+	ELSEIF RESULT == 203
+		CALL MENU_TRAINING
+	;휴식
+	ELSEIF RESULT == 204
+		CALL MENU_REST
+	;정착지
+	ELSEIF RESULT == 205 && FLAG:정착지해금 == 1
+		CALL MENU_SETTLEMENT
+	;축제
+	ELSEIF RESULT == 206 && FLAG:축제해금 == 1
+		CALL MENU_FESTIVAL
+	;성당
+	ELSEIF RESULT == 207 && FLAG:성당해금 == 1
+		CALL MENU_CATHEDRAL
+	;천문대
+	ELSEIF RESULT == 208 && FLAG:천문대해금 == 1
+		CALL MENU_OBSERVATORY
+	
+	;뒷골목
+	ELSEIF RESULT == 401 && FLAG:뒷골목해금 == 1
+		CALL MENU_BACKALLEY
+	;인연의방
+	ELSEIF RESULT == 402 && FLAG:인연의방해금 == 1
+		CALL MENU_BOND_ROOM
+	;뉴게임
+	ELSEIF RESULT == 403 && FLAG:뉴게임해금 == 1
+		CALL MENU_NEWGAME_PLUS
+	;유물
+	ELSEIF RESULT == 404 && FLAG:유물해금 == 1
+		CALL MENU_RELIC_ARCHIVE
+
+	; SYSTEM MENU
+	ELSEIF RESULT == 801
+		SAVEGAME
+		RESULT = 0
+	ELSEIF RESULT == 802
+		LOADGAME
+	ELSEIF RESULT == 803
+		CALL configMenu
+		RESULT = 0
+
+	ELSEIF RESULT == 805
+		CALL TESTMENU01
+	ELSEIF RESULT == 806
+		CALL TESTMENU02
+	ELSEIF RESULT == 807
+		CALL TESTMENU03
+
+	ELSEIF RESULT == 808
+		CALL DEVROOMMENU
+
+	ENDIF
+	RETURN
+
+@saveInfo
+	PUTFORM {DAY,3,RIGHT}일차 %NAME:MASTER, 14, LEFT%

@@ -8,33 +8,16 @@
 ; 테스트 버튼 1
 ;-----------------------------------------------
 @TESTMENU01
-    IF FLAG:정착지해금 == 0
-        FLAG:정착지해금 = 1
-        PRINTW 정착지 해금 온
-    ELSE
-        FLAG:정착지해금 = 0
-        PRINTW 정착지 해금 오프
-    ENDIF
+    DAY += 1
+    PRINTW 1일 추가
     RETURN
 @TESTMENU02    
-    IF FLAG:축제해금 == 0
-        FLAG:축제해금 = 1
-        PRINTW 축제 해금 온
-    ELSE
-        FLAG:축제해금 = 0
-        PRINTW 축제 해금 오프
-    ENDIF
+    DAY += 10
+    PRINTW 10일 추가
     RETURN
 @TESTMENU03
-    IF FLAG:성당해금 == 0
-        FLAG:성당해금 = 1
-        FLAG:천문대해금 = 1
-        PRINTW 성당천문 해금 온
-    ELSE
-        FLAG:성당해금 = 0
-        FLAG:천문대해금 = 0
-        PRINTW  성당천문 해금 오프
-    ENDIF
+    DAY -= 5
+    PRINTW 5일 감소
     RETURN
 
 @DEVROOMMENU
@@ -43,6 +26,8 @@
 
     $INPUTMENU
     PRINTL [1] - 모든 메뉴 해금/잠금
+    PRINTL [2] - 일자 변경
+    PRINTL [3] - 낮/밤 변경
     PRINTL [99] - 돌아가기
     INPUT
     IF RESULT == 1
@@ -68,6 +53,31 @@
             FLAG:뉴게임해금 = 0
             FLAG:유물해금 = 0
             PRINTFORMW 모든 메뉴를 잠궜습니다.
+        ENDIF
+        GOTO INPUTMENU
+    ;일자 변경
+    ELSEIF RESULT == 2
+        PRINTFORML 변경하실 날자를 입력해주시기 바랍니다.(현재 : {DAY}일)
+        PRINTFORML 0 혹은 그 이하로 취소
+        INPUT
+
+        IF RESULT <= 0
+            PRINTFORMW 변경을 취소합니다.
+        ELSE
+            DAY = RESULT
+            PRINTFORMW {DAY}일로 변경합니다.
+        ENDIF
+        GOTO INPUTMENU
+
+    ;밤낮 변경
+    ELSEIF RESULT == 3
+        ;낮이면
+        IF FLAG:밤낮 == 0
+            FLAG:밤낮 = 1
+            PRINTFORMW 밤으로 변경합니다.
+        ELSE
+            FLAG:밤낮 = 0
+            PRINTFORMW 낮으로 변경합니다.
         ENDIF
         GOTO INPUTMENU
     ELSEIF RESULT == 99

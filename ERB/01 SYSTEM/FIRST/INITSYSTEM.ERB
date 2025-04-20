@@ -1,22 +1,21 @@
 ﻿@initSystem
 #dim dynamic mobIdx
-
+#DIM CHAR
 	FLAG:고정난수시드 = RAND:__INT_MAX__
-	
-	FLAG:성병보균율 = 150
-	FLAG:최면이벤트확률 = 5
-	FLAG:성희롱확률 = 5
-	FLAG:체포확률 = 10
-	FLAG:명성확률 = 10
-	
-	FLAG:마석환율 = 75 + RAND:50
+
+	;모든 고정 캐릭터와 「당신」를 작성한다 
+	FOR CHAR, 0, 500
+		;CSV 파일의 존재 판정
+		SIF EXISTCSV(CHAR)
+			CALL ADD_CHARA_FROM_CSV(CHAR)
+	NEXT
 
 	; placeholder 캐릭터 추가
-	addChara 1001
-	addChara 1002
-	addChara 1003
+;	addChara 1001
+;	addChara 1002
+;	addChara 1003
 	
-	CALL initNPC
+;	CALL initNPC
 
 	; CSV 값 수정
 	CALL updateCsv
@@ -53,3 +52,14 @@
 		addChara charaNo
 		CALL randomizeChara(getChara(charaNo))
 	endif
+
+
+;캐릭터를 CSV로부터 추가할 때에 필요한 처리를 집계한 것
+;돌아가 값에 캐릭터의 번호를 돌려준다  ID를 갖고 싶었으면 GET_ID 하는 것
+@ADD_CHARA_FROM_CSV(CSVNO)
+#DIM CSVNO
+;캐릭터를 CSV로부터 읽어내고 나서 초기설정을 한다
+ADDCHARA CSVNO
+;초기설정
+;CALL INIT_NEWCHARA(CHARANUM - 1)
+RETURN CHARANUM - 1

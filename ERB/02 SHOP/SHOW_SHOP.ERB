@@ -6,7 +6,7 @@
 
 	if FLAG:원정중
 		PRINTL
-		drawLine
+		DRAWLINE
 
 		CALL continueExpeditionShopMenu
 	endif
@@ -14,20 +14,12 @@
 	PRINTL
 	DRAWLINE
 
-	;계절에 대한 설명(넣어야함)
-	PRINT 봄의 
-
-	FONTBOLD
-	SETCOLOR 0xffffff
-	PRINTFORM {DAY}
-	FONTREGULAR
-	RESETCOLOR
-	PRINT 일차 아침
 
 	
 	fontRegular
 	resetColor
-	
+	CALL YEAR_DATE_SHOW
+;	PRINTFORM %YEAR_DATE_SHOW%
 	PRINT    소지금 : 
 
 	FONTBOLD
@@ -38,17 +30,19 @@
 	PRINTL
 	PRINTL
 
-	PRINTL =============[ 여관 관리 장부 ]=============
+	PRINTL =====[ 여관 관리 장부 ]=====================================================================================================
 	PRINTL
 	PRINTL  < 숙박현황 > : 빈 방 2 / 사용중 3
 	PRINTL  <  청결도  > : 높음                 <   식사   > : 충분
+	PRINTL  <  유지비  > : 100G / 일
 	PRINT  < 마을상황 > : 평온함               
 	PRINTL <   소문   > : "도시에서 새로운 모험가들이 찾아오나봐"
 	PRINTL
-	PRINTL ============================================
-	PRINTFORML  행동력 : {BASE:MASTER:행동력} / {BASE:MASTER:최대행동력}
-	PRINTL   체력  : [■■■■■■■■■■■■■■■■■■■■■](100/100)
-	PRINTL   기력  : [■■■■■■■■■■■■■■■■■■■■■](100/100)
+	PRINTL =====[  캐릭터 상황   ]=====================================================================================================
+	PRINTL
+	PRINTFORML  < 행동력 > :   {BASE:MASTER:행동력,2,RIGHT} / {MAXBASE:MASTER:행동력,2,LEFT}
+	PRINTFORML  <  체력  > : {BASE:MASTER:체력,4,RIGHT} / {MAXBASE:MASTER:체력,4,LEFT}
+	PRINTFORML  <  기력  > : {BASE:MASTER:기력,4,RIGHT} / {MAXBASE:MASTER:기력,4,LEFT}
 	PRINTL 
 	
 	DRAWLINE
@@ -60,3 +54,6 @@
 	endif
 	
 	CALL showMenu
+
+
+

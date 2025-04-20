@@ -4,7 +4,8 @@
 
 ; Base
 BASE,체력,1500
-BASE,마력,500
+BASE,기력,500
+BASE,행동력,4
 BASE,이성,1000
 
 BASE,보지조임,45
