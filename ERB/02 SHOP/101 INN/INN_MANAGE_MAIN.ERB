@@ -4,6 +4,152 @@
 ; ------------------------------------
 
 @INN_MANAGE
-    PRINTW 여관관리 탭입니다.
 
+$INPUT_INN_MANAGE
+
+CALL INN_MANAGE_SHOW
+INPUT
+
+;손님응대
+IF RESULT == 101
+    PRINTFORMW 손님응대입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;객실관리
+ELSEIF RESULT == 102
+    PRINTFORMW 객실관리입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;청소
+ELSEIF RESULT == 103
+    PRINTFORMW 청소입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;요리
+ELSEIF RESULT == 104
+    PRINTFORMW 요리입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;장부확인
+ELSEIF RESULT == 105
+    PRINTFORMW 장부확인입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;재고확인
+ELSEIF RESULT == 106
+    PRINTFORMW 재고확인입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;계약체결
+ELSEIF RESULT == 107
+    PRINTFORMW 계약체결입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;시설점검
+ELSEIF RESULT == 108
+    PRINTFORMW 시설점검입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;여관정보
+ELSEIF RESULT == 109
+    PRINTFORMW 여관정보입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;직원관리
+ELSEIF RESULT == 110
+    PRINTFORMW 직원관리입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+
+;시설확장
+ELSEIF RESULT == 111
+    PRINTFORMW 시설확장입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;텃밭관리
+ELSEIF RESULT == 112
+    PRINTFORMW 텃밭관리입니다.
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+;루미설명방
+ELSEIF RESULT == 998
+    CALL LUMI_HELP_MENU
+    CLEARLINE 2
+    GOTO INPUT_INN_MANAGE
+
+ELSEIF RESULT == 999
+    RETURN
+ELSE
+    CLEARLINE 1
+    GOTO INPUT_INN_MANAGE
+ENDIF
+
+RETURN
+
+@INN_MANAGE_SHOW
+
+;CLEARLINE LINECOUNT
+
+DRAWLINE
+PRINTFORML          《 여관 관리 장부 》 
+DRAWLINE
+PRINTFORML  < 숙박현황 > 빈 방(2) / 사용중(4) / 청소필요(2)
+PRINTFORML  < 시설상태 > 안정적(온수기:양호 / 조리도구 : 노후)
+PRINTFORML  <  청결도  > 높음         < 식사준비 > 충분(곡물죽, 수제맥주, 염장고기)
+PRINTFORML  <   평판   > 괜찮은 여관
+PRINTFORML
+DRAWLINE
+PRINTFORML          《 매출 현황 》 
+DRAWLINE
+PRINTFORML   수입액 : 200G
+PRINTFORML    - 단기숙박 : 50G  [상세보기]     장기숙박 : 50G [상세보기]
+PRINTFORML    - 계약수주 : 500G                식사판매 : 60G
+PRINTFORML   지출액 : 100G
+PRINTFORML    - 인건비 : 50G   [상세보기]      세금 : 15G  [상세보기]
+PRINTFORML    - 의뢰비 : 100G  [상세보기]
+PRINTFORML   재료소모량
+PRINTFORML    - 식자재 : △ 10개(재고 : 200개)  고급식자재 : 0개(재고 : 10개)
+PRINTFORML    - 연  료 : △ 10개(재고 : 100개)
+PRINTL
+PRINTFORML   < 여관 운영 매출 > +100G
+PRINTL
+PRINTL =====[  캐릭터 상황   ]=====================================================================================================
+PRINTL
+PRINTFORML  < 행동력 > :   {BASE:MASTER:행동력,2,RIGHT} / {MAXBASE:MASTER:행동력,2,LEFT}
+PRINTFORML  <  체력  > : {BASE:MASTER:체력,4,RIGHT} / {MAXBASE:MASTER:체력,4,LEFT}
+PRINTFORML  <  기력  > : {BASE:MASTER:기력,4,RIGHT} / {MAXBASE:MASTER:기력,4,LEFT}
+PRINTL 
+DRAWLINE
+PRINTFORML 
+PRINTL 《 운영 》
+PRINTLC  [101] - 손님응대
+PRINTLC  [102] - 객실관리
+PRINTLC  [103] - 청소
+PRINTLC  [104] - 요리 
+PRINTL
+PRINTLC  [105] - 장부확인
+PRINTLC  [106] - 재고확인
+PRINTLC  [107] - 계약체결
+PRINTLC  [108] - 시설점검
+PRINTL
+PRINTLC  [109] - 여관정보
+PRINTLC  [110] - 직원관리
+PRINTLC  [111] - 시설확장
+PRINTLC  [112] - 텃밭관리
+PRINTL
+PRINTLC  [998] - 도움말
+PRINTLC  [999] - 돌아가기
+PRINTFORML
 RETURN
